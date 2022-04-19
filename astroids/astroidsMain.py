@@ -73,26 +73,23 @@ class Astroid:
             y1 = self.location[1] + math.sin(rad) * scale
             self.nodes.append([x1,y1, rad, scale])
             
-    def handleBulletCollison(self, bullet):
-        
-        line2start = bullet.location
-        line2end = [bullet.location[0]+bullet.xv, bullet.location[1]+bullet.yv]
+    def handleCollison(self, line2start, line2end):
         
         for x in range(self.points-1):
             line1start = [self.nodes[x][0], self.nodes[x][1]]
             line1end = [self.nodes[x+1][0], self.nodes[x+1][1]]
             if contact(line1start, line1end, line2start, line2end):
-                bullet.deleteMe = True
-                self.deleteMe = True
+                return True
 
         line1start = [self.nodes[0][0], self.nodes[0][1]]
         line1end = [self.nodes[-1][0], self.nodes[-1][1]]
 
         if contact(line1start, line1end, line2start, line2end):
-                bullet.deleteMe = True
-                self.deleteMe = True
+            return True
+        
+        return False
 
-            
+        
     def update(self):
         
         wrap(self.location)
@@ -133,9 +130,17 @@ class Astroids:
     def checkCollisons(self, ship):
         for bullet in ship.bullets:
             for astroid in self.astroids:
-                astroid.handleBulletCollison(bullet)
-    
-    def update(self):       
+                if astroid.handleCollison(bullet.location, [bullet.location[0]+bullet.xv, bullet.location[1]+bullet.yv]):
+                    astroid.deleteMe = True
+                    bullet.deleteMe = True
+          
+        for astroid in self.astroids:
+            if astroid.handleCollison(ship.tip, ship.backRight) or astroid.handleCollison(ship.tip, ship.backLeft) or astroid.handleCollison(ship.backRight, ship.backLeft):
+                ship.die()
+                
+        
+    def update(self):
+        
         for astroid in self.astroids:
             astroid.update()
             if astroid.deleteMe:
@@ -213,6 +218,11 @@ class Ship:
         self.lastPress = ""
         self.bullets = []
         self.friction = .995
+        self.hit = False
+        
+    def die(self):
+        self.hit = True
+        print("im hit")
               
     def calcRotation(self, vector, offset, scale):
         
