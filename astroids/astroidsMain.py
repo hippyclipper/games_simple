@@ -17,7 +17,6 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
-
 def wrap(vector):
     
     if vector[0] > width:
@@ -30,6 +29,64 @@ def wrap(vector):
     elif vector[1] < 0:
         vector[1] = height    
 
+class Astroid:
+    
+    def __init__(self,x,y):
+        self.location = [x, y]
+        self.vel = [random.randint(-1,1),random.randint(-1,1)]
+        self.nodes = []
+        self.points = 10
+        for x in range(self.points):
+            scale = random.randint(10,20) * 2
+            rad = math.pi * 2 * (x/self.points)
+            x1 = self.location[0] + math.cos(rad) * scale
+            y1 = self.location[1] + math.sin(rad) * scale
+            self.nodes.append([x1,y1, rad, scale])
+        
+    def update(self):
+        
+        wrap(self.location)
+        
+        self.location[0] += self.vel[0]
+        self.location[1] += self.vel[1]
+        
+        for node in self.nodes:
+            node[2] += .01
+                        
+            node[0] = self.location[0] + math.cos(node[2]) * node[3]
+            node[1] = self.location[1] + math.sin(node[2]) * node[3]
+            
+            node[0] += self.vel[0]
+            node[1] += self.vel[1]
+    
+    def draw(self):
+        for x in range(self.points-1):
+            first = [self.nodes[x][0], self.nodes[x][1]]
+            last = [self.nodes[x+1][0], self.nodes[x+1][1]]
+            pygame.draw.line(screen, GREEN, first, last, 1)
+            #pygame.draw.circle(screen, GREEN, self.nodes[x], 3)
+            
+        first = (self.nodes[0][0], self.nodes[0][1])
+        last = (self.nodes[-1][0], self.nodes[-1][1])
+        
+        pygame.draw.line(screen, GREEN, first, last, 1)
+        
+class Astroids:
+    
+    def __init__(self):
+        self.astroids = []
+        for x in range(6):
+            randx = random.randint(0, width) 
+            randy = random.randint(0, height) 
+            self.astroids.append(Astroid(randx, randy))
+            
+    def update(self):       
+        for x in self.astroids:
+            x.update()
+            
+    def draw(self):
+        for x in self.astroids:
+            x.draw()
 
 
 
@@ -62,7 +119,8 @@ class Bullet:
         
     def draw(self):
         pygame.draw.circle(screen, self.color, self.location, self.r)
-             
+  
+  
 class Ship:
     
     def __init__(self):
@@ -83,7 +141,7 @@ class Ship:
         self.up = False
         self.lastPress = ""
         self.bullets = []
-        self.friction = .997
+        self.friction = .995
               
     def calcRotation(self, vector, offset, scale):
         
@@ -143,7 +201,6 @@ class Ship:
         self.up = False
         self.acc = [0, 0]
 
-
     def draw(self):
         
         if self.up:
@@ -159,11 +216,9 @@ class Ship:
         
         for bullet in self.bullets:
             bullet.draw()
-       
-        #pygame.draw.line(screen, GREEN, (self.x1, self.y1), (self.x2, self.y2), 1)
         
 ship = Ship()
-
+astroids = Astroids()
 
 while not done:
     
@@ -185,7 +240,10 @@ while not done:
             ship.right = False
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             ship.stopRocket()
-        
+    
+    astroids.update()
+    astroids.draw()
+    
     ship.update()        
     ship.draw()      
             
