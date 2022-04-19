@@ -17,6 +17,32 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
+def contact(line1start, line1end, line2start, line2end):
+    x1 = line1start[0]
+    y1 = line1start[1]
+    
+    x2 = line1end[0]
+    y2 = line1end[1]
+    
+    x3 = line2start[0]
+    y3 = line2start[1]
+    
+    x4 = line2end[0]
+    y4 = line2end[1]
+    
+    D = ((x1 - x2) * (y3-y4)) - ((y1 - y2) * (x3 - x4))
+    
+    if D == 0:
+        return False
+    
+    t = (((x1-x3) * (y3-y4)) - ((y1-y3) * (x3-x4))) / D
+    u = (((x1-x3) * (y1-y2)) - ((y1-y3) * (x1-x2))) / D
+    
+    if not (0 <= t <= 1 and 0 <= u <= 1):
+        return False
+    
+    return True
+
 def wrap(vector):
     
     if vector[0] > width:
@@ -31,18 +57,42 @@ def wrap(vector):
 
 class Astroid:
     
-    def __init__(self,x,y):
+    def __init__(self,x,y, size = 3):
+        velRange = 4-size
         self.location = [x, y]
-        self.vel = [random.randint(-1,1),random.randint(-1,1)]
+        self.vel = [random.random() * random.randint(-velRange,velRange),random.random() * random.randint(-velRange,-velRange)]
         self.nodes = []
         self.points = 10
+        self.deleteMe = False
+        self.size = size
+        
         for x in range(self.points):
-            scale = random.randint(10,20) * 2
+            scale = random.randint(10,20) * self.size
             rad = math.pi * 2 * (x/self.points)
             x1 = self.location[0] + math.cos(rad) * scale
             y1 = self.location[1] + math.sin(rad) * scale
             self.nodes.append([x1,y1, rad, scale])
+            
+    def handleBulletCollison(self, bullet):
         
+        line2start = bullet.location
+        line2end = [bullet.location[0]+bullet.xv, bullet.location[1]+bullet.yv]
+        
+        for x in range(self.points-1):
+            line1start = [self.nodes[x][0], self.nodes[x][1]]
+            line1end = [self.nodes[x+1][0], self.nodes[x+1][1]]
+            if contact(line1start, line1end, line2start, line2end):
+                bullet.deleteMe = True
+                self.deleteMe = True
+
+        line1start = [self.nodes[0][0], self.nodes[0][1]]
+        line1end = [self.nodes[-1][0], self.nodes[-1][1]]
+
+        if contact(line1start, line1end, line2start, line2end):
+                bullet.deleteMe = True
+                self.deleteMe = True
+
+            
     def update(self):
         
         wrap(self.location)
@@ -78,12 +128,33 @@ class Astroids:
         for x in range(6):
             randx = random.randint(0, width) 
             randy = random.randint(0, height) 
-            self.astroids.append(Astroid(randx, randy))
+            self.astroids.append(Astroid(randx, randy))        
             
+    def checkCollisons(self, ship):
+        for bullet in ship.bullets:
+            for astroid in self.astroids:
+                astroid.handleBulletCollison(bullet)
+    
     def update(self):       
-        for x in self.astroids:
-            x.update()
-            
+        for astroid in self.astroids:
+            astroid.update()
+            if astroid.deleteMe:
+                size = None
+                numNew = None
+                if astroid.size == 3:
+                    numNew = 3
+                    size = 2
+                elif astroid.size == 2:
+                    numNew = 4
+                    size = 1
+                else:
+                    numNew = 0
+                    size = 1
+                
+                for x in range(numNew):
+                    self.astroids.append(Astroid(astroid.location[0], astroid.location[1], size))                    
+                self.astroids.remove(astroid)
+                
     def draw(self):
         for x in self.astroids:
             x.draw()
@@ -153,9 +224,8 @@ class Ship:
         wrap(self.center)
                 
         if self.up:
-            offset = 0#math.pi * 2 * .75
-            self.acc[0] = math.cos(self.rad+offset) * self.speed
-            self.acc[1] = math.sin(self.rad+offset) * self.speed
+            self.acc[0] = math.cos(self.rad) * self.speed
+            self.acc[1] = math.sin(self.rad) * self.speed
         
         self.vel[0] += self.acc[0]
         self.vel[1] += self.acc[1]
@@ -216,7 +286,10 @@ class Ship:
         
         for bullet in self.bullets:
             bullet.draw()
-        
+
+
+
+
 ship = Ship()
 astroids = Astroids()
 
@@ -240,6 +313,8 @@ while not done:
             ship.right = False
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             ship.stopRocket()
+    
+    astroids.checkCollisons(ship)
     
     astroids.update()
     astroids.draw()
