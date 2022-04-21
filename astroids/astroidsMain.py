@@ -152,11 +152,13 @@ class Astroids:
                 if astroid.handleCollison(bullet.location, [bullet.location[0]+bullet.xv, bullet.location[1]+bullet.yv]):
                     astroid.deleteMe = True
                     bullet.deleteMe = True
+                    hud.score += (4-astroid.size) * 10
           
         for astroid in self.astroids:
             if astroid.handleCollison(ship.tip, ship.backRight) or astroid.handleCollison(ship.tip, ship.backLeft) or astroid.handleCollison(ship.backRight, ship.backLeft):
                 if not ship.hit:
                     hud.lives -= 1
+                    hud.score = max(hud.score-100, 0)
                 ship.die()
                 
         
@@ -386,7 +388,7 @@ class Ship:
                 pygame.draw.line(screen, self.color, points[0], points[1], 2)
             return
         
-        if self.up and not self.flicker % 10 <= 5:
+        if self.up and self.flicker % 10 <= 5:
             pygame.draw.line(screen, self.color, self.rocketTip, self.rocketBackLeft, 2)
             pygame.draw.line(screen, self.color, self.rocketTip, self.rocketBackRight, 2)
 
@@ -394,21 +396,27 @@ class Ship:
         pygame.draw.line(screen, self.color, self.tip, self.backRight, 2)
         pygame.draw.line(screen, self.color, self.backLeft, self.backRight, 2)
         
-
+font = pygame.font.SysFont('arial', 75)
 class Hud:
      
     def __init__(self):
         self.dummyShips = [Ship(), Ship(), Ship()]
         self.lives = 3
+        self.score = 0
+        self.color = (255,255,255)
+        self.font = pygame.font.SysFont('arial', 30)
+        self.textObj = self.font.render(str(self.score),True,self.color)
         
         for i,ship in enumerate(self.dummyShips):
             ship.center[0] = 25 + (i * 30)
-            ship.center[1] = 30
+            ship.center[1] = 60
             ship.update()
     
     def draw(self):
         for x in range(self.lives):
             self.dummyShips[x].draw()
+        self.textObj = self.font.render(str(self.score),True,self.color)
+        screen.blit(self.textObj, [10,5])
 
 
 ship = Ship()
