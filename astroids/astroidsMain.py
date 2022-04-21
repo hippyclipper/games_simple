@@ -43,16 +43,16 @@ def contact(line1start, line1end, line2start, line2end):
     
     return True
 
-def wrap(vector):
+def wrap(vector, offset):
     
-    if vector[0] > width:
+    if offset+vector[0] > width:
         vector[0] = 0
-    elif vector[0] < 0:
+    elif vector[0] < 0-offset:
         vector[0] = width
     
-    if vector[1] > height:
+    if offset+vector[1] > height:
         vector[1] = 0
-    elif vector[1] < 0:
+    elif vector[1] < 0-offset:
         vector[1] = height    
 
 class Astroid:
@@ -92,7 +92,7 @@ class Astroid:
         
     def update(self):
         
-        wrap(self.location)
+        wrap(self.location,0)
         
         self.location[0] += self.vel[0]
         self.location[1] += self.vel[1]
@@ -118,9 +118,9 @@ class Astroid:
         
         pygame.draw.line(screen, self.color, first, last, 1)
 
-def adjustMiddle(postion, middle):
-    if -100 < postion-middle < 100:
-        return postion + ([1,-1][random.randint(0,1)] * 200)
+def adjustMiddle(postion, middle, radius, dist):
+    if -radius < postion-middle < radius:
+        return postion + ([1,-1][random.randint(0,1)] * dist)
     else:
         return postion
 
@@ -131,11 +131,21 @@ class Astroids:
         for x in range(6):
             randx = random.randint(0, width) 
             randy = random.randint(0, height)
-            randx = adjustMiddle(randx, width//2)
-            randy = adjustMiddle(randy, height//2)
-            self.astroids.append(Astroid(randx, randy))        
+            randx = adjustMiddle(randx, width//2, 100,200)
+            randy = adjustMiddle(randy, height//2, 100,200)
+            self.astroids.append(Astroid(randx, randy))
+            
+    def handleRespawn(self):
+        for astroid in self.astroids:
+            if pygame.Vector2(astroid.location).distance_to([width//2, height//2]) < 100:
+                astroid.location[0] = width * 2
+                astroid.location[1] = height * 2
             
     def checkCollisons(self, ship):
+        
+        if ship.deathCounter == 1:
+            self.handleRespawn()
+                
         for bullet in ship.bullets:
             for astroid in self.astroids:
                 if astroid.handleCollison(bullet.location, [bullet.location[0]+bullet.xv, bullet.location[1]+bullet.yv]):
@@ -196,7 +206,7 @@ class Bullet:
         
         self.travled += abs(self.xv) + abs(self.yv)
         
-        wrap(self.location)
+        wrap(self.location,0)
 
         if self.travled > self.maxDis:
             self.deleteMe = True
@@ -239,7 +249,12 @@ class Ship:
                           [ [self.center[0]+5, self.center[1]-17],[self.center[0], self.center[1]] ],
                           [ [self.center[0]+12, self.center[1]-4],[self.center[0]-6, self.center[1]-7] ],
                           [ [self.center[0]-12, self.center[1]+4],[self.center[0]+6, self.center[1]-13] ] ]
-
+ 
+#         self.deadShip = [ [ [10, 10],[-10, 5] ],
+#                            [ [-10, -10],[5, 5] ],
+#                            [ [5, -17],[0, 10] ],
+#                            [ [12, -4],[-6, -7] ],
+#                            [ [-12, 4],[6, -13] ] ]
               
     def calcRotation(self, vector, offset, scale):
         
@@ -249,7 +264,7 @@ class Ship:
     def update(self):
         
         
-        wrap(self.center)
+        wrap(self.center, 0)
         
         for bullet in self.bullets:
             bullet.update()
@@ -332,6 +347,8 @@ class Ship:
                 for point in points:
                     point[0] += self.vel[0]
                     point[1] += self.vel[1]
+                    
+                    
 
     def draw(self):
         
