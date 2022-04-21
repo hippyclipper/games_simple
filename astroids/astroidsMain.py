@@ -65,7 +65,7 @@ class Astroid:
         self.points = 10
         self.deleteMe = False
         self.size = size
-        
+        self.color = (255,255,255)
         for x in range(self.points):
             scale = random.randint(10,20) * self.size
             rad = math.pi * 2 * (x/self.points)
@@ -110,21 +110,29 @@ class Astroid:
         for x in range(self.points-1):
             first = [self.nodes[x][0], self.nodes[x][1]]
             last = [self.nodes[x+1][0], self.nodes[x+1][1]]
-            pygame.draw.line(screen, GREEN, first, last, 1)
+            pygame.draw.line(screen, self.color, first, last, 1)
             #pygame.draw.circle(screen, GREEN, self.nodes[x], 3)
             
         first = (self.nodes[0][0], self.nodes[0][1])
         last = (self.nodes[-1][0], self.nodes[-1][1])
         
-        pygame.draw.line(screen, GREEN, first, last, 1)
-        
+        pygame.draw.line(screen, self.color, first, last, 1)
+
+def adjustMiddle(postion, middle):
+    if -100 < postion-middle < 100:
+        return postion + ([1,-1][random.randint(0,1)] * 200)
+    else:
+        return postion
+
 class Astroids:
     
     def __init__(self):
         self.astroids = []
         for x in range(6):
             randx = random.randint(0, width) 
-            randy = random.randint(0, height) 
+            randy = random.randint(0, height)
+            randx = adjustMiddle(randx, width//2)
+            randy = adjustMiddle(randy, height//2)
             self.astroids.append(Astroid(randx, randy))        
             
     def checkCollisons(self, ship):
@@ -219,10 +227,18 @@ class Ship:
         self.bullets = []
         self.friction = .995
         self.hit = False
-        
+        self.flicker = 0
+        self.deadShip = [[[0,0]]]
+         
     def die(self):
         self.hit = True
-        print("im hit")
+        self.stopRocket()
+        self.deadShip = [ [ [self.center[0]+10, self.center[1]+10],[self.center[0]-10, self.center[1]+5] ],
+                          [ [self.center[0]-10, self.center[1]-10],[self.center[0]+5, self.center[1]+5] ],
+                          [ [self.center[0]+5, self.center[1]-17],[self.center[0], self.center[1]] ],
+                          [ [self.center[0], self.center[1]],[self.center[0], self.center[1]] ],
+                          [ [self.center[0], self.center[1]],[self.center[0], self.center[1]] ] ]
+
               
     def calcRotation(self, vector, offset, scale):
         
@@ -231,9 +247,12 @@ class Ship:
       
     def update(self):
         
+        
         wrap(self.center)
+        self.updateDead()
                 
         if self.up:
+            self.flicker += 1
             self.acc[0] = math.cos(self.rad) * self.speed
             self.acc[1] = math.sin(self.rad) * self.speed
         
@@ -280,22 +299,36 @@ class Ship:
     def stopRocket(self):
         self.up = False
         self.acc = [0, 0]
+        self.flicker = 0
+    
+    def updateDead(self):
+        if self.hit:
+            for points in self.deadShip:
+                for point in points:
+                    point[0] += self.vel[0]
+                    point[1] += self.vel[1]
 
     def draw(self):
         
-        if self.up:
-            pygame.draw.circle(screen, RED, self.center, 2)
+        for bullet in self.bullets:
+            bullet.draw()
+            
+        if self.hit:
+            for points in self.deadShip:
+                pygame.draw.line(screen, self.color, points[0], points[1], 2)
+            return
+        
+        if self.up and not self.flicker % 10 <= 5:
+            pygame.draw.circle(screen, self.color, self.center, 2)
         
         if self.fire:
             pygame.draw.circle(screen, self.color, self.center, 2)
             self.fire = False
-            
-        pygame.draw.circle(screen, RED, self.tip, self.r)
-        pygame.draw.circle(screen, GREEN, self.backLeft, self.r)
-        pygame.draw.circle(screen, GREEN, self.backRight, self.r)
         
-        for bullet in self.bullets:
-            bullet.draw()
+        pygame.draw.line(screen, self.color, self.tip, self.backLeft, 2)
+        pygame.draw.line(screen, self.color, self.tip, self.backRight, 2)
+        pygame.draw.line(screen, self.color, self.backLeft, self.backRight, 2)
+        
 
 
 
