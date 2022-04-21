@@ -229,6 +229,7 @@ class Ship:
         self.hit = False
         self.flicker = 0
         self.deadShip = [[[0,0]]]
+        self.deathCounter = 120
          
     def die(self):
         self.hit = True
@@ -236,8 +237,8 @@ class Ship:
         self.deadShip = [ [ [self.center[0]+10, self.center[1]+10],[self.center[0]-10, self.center[1]+5] ],
                           [ [self.center[0]-10, self.center[1]-10],[self.center[0]+5, self.center[1]+5] ],
                           [ [self.center[0]+5, self.center[1]-17],[self.center[0], self.center[1]] ],
-                          [ [self.center[0], self.center[1]],[self.center[0], self.center[1]] ],
-                          [ [self.center[0], self.center[1]],[self.center[0], self.center[1]] ] ]
+                          [ [self.center[0]+12, self.center[1]-4],[self.center[0]-6, self.center[1]-7] ],
+                          [ [self.center[0]-12, self.center[1]+4],[self.center[0]+6, self.center[1]-13] ] ]
 
               
     def calcRotation(self, vector, offset, scale):
@@ -249,12 +250,23 @@ class Ship:
         
         
         wrap(self.center)
+        
+        for bullet in self.bullets:
+            bullet.update()
+            if bullet.deleteMe:
+                self.bullets.remove(bullet)
+        
         self.updateDead()
+        
+        if self.deathCounter == 0:
+            self.reset()
                 
-        if self.up:
+        if self.up and not self.hit:           
             self.flicker += 1
             self.acc[0] = math.cos(self.rad) * self.speed
-            self.acc[1] = math.sin(self.rad) * self.speed
+            self.acc[1] = math.sin(self.rad) * self.speed           
+        elif self.hit:
+            self.acc = [0,0]
         
         self.vel[0] += self.acc[0]
         self.vel[1] += self.acc[1]
@@ -274,12 +286,22 @@ class Ship:
         self.calcRotation(self.backLeft, math.pi * 2 * (5/8), 15) #G
         self.calcRotation(self.backRight, math.pi * 2 * (3/8), 15) #B
         
-        for bullet in self.bullets:
-            bullet.update()
-            if bullet.deleteMe:
-                self.bullets.remove(bullet)
-        
+    
+    def reset(self):
+        self.center = [ width//2, height//2 ]
+        self.rad = math.pi * 2 * .75
+        self.vel = [0,0]
+        self.acc = [0,0]
+        self.hit = False
+        self.fire = False
+        self.left = False
+        self.right = False
+        self.up = False
+        self.bullets = []
+        self.deathCounter = 120
+    
     def startRightTurn(self):
+
         self.right = True
         self.lastPress = "right"
     
@@ -288,10 +310,12 @@ class Ship:
         self.lastPress = "left"
         
     def fireGun(self):
+        if self.hit: return
         self.fire = True
         self.bullets.append(Bullet(self.tip[:], self.rad))
         
     def startRocket(self):
+
         self.up = True
         self.acc[0] = math.cos(self.rad) * self.speed
         self.acc[1] = math.sin(self.rad) * self.speed
@@ -303,6 +327,7 @@ class Ship:
     
     def updateDead(self):
         if self.hit:
+            self.deathCounter -= 1
             for points in self.deadShip:
                 for point in points:
                     point[0] += self.vel[0]
