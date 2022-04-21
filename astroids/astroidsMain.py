@@ -141,7 +141,7 @@ class Astroids:
                 astroid.location[0] = width * 2
                 astroid.location[1] = height * 2
             
-    def checkCollisons(self, ship):
+    def checkCollisons(self, ship, hud):
         
         if ship.deathCounter == 1:
             self.handleRespawn()
@@ -154,6 +154,8 @@ class Astroids:
           
         for astroid in self.astroids:
             if astroid.handleCollison(ship.tip, ship.backRight) or astroid.handleCollison(ship.tip, ship.backLeft) or astroid.handleCollison(ship.backRight, ship.backLeft):
+                if not ship.hit:
+                    hud.lives -= 1
                 ship.die()
                 
         
@@ -222,6 +224,7 @@ class Ship:
         self.tip = [0,0]
         self.backLeft = [0,0]
         self.backRight = [0,0]
+        self.rocketTip = [0,0]
         self.vel = [0,0]
         self.acc = [0,0]
         self.scale = 10
@@ -372,11 +375,24 @@ class Ship:
         pygame.draw.line(screen, self.color, self.backLeft, self.backRight, 2)
         
 
-
+class Hud:
+     
+    def __init__(self):
+        self.dummyShips = [Ship(), Ship(), Ship()]
+        self.lives = 3
+        for i,ship in enumerate(self.dummyShips):
+            ship.center[0] = 25 + (i * 30)
+            ship.center[1] = 30
+            ship.update()
+    
+    def draw(self):
+        for x in range(self.lives):
+            self.dummyShips[x].draw()
 
 
 ship = Ship()
 astroids = Astroids()
+hud = Hud()
 
 while not done:
     
@@ -399,13 +415,15 @@ while not done:
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             ship.stopRocket()
     
-    astroids.checkCollisons(ship)
+    astroids.checkCollisons(ship, hud)
     
     astroids.update()
     astroids.draw()
     
     ship.update()        
-    ship.draw()      
+    ship.draw()
+    
+    hud.draw()
             
     pygame.display.flip()
     clock.tick(60)
