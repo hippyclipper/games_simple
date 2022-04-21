@@ -53,8 +53,14 @@ def wrap(vector, offset):
     if offset+vector[1] > height:
         vector[1] = 0
     elif vector[1] < 0-offset:
-        vector[1] = height    
-
+        vector[1] = height
+        
+def adjustMiddle(postion, middle, radius, dist):
+    if -radius < postion-middle < radius:
+        return postion + ([1,-1][random.randint(0,1)] * dist)
+    else:
+        return postion
+    
 class Astroid:
     
     def __init__(self,x,y, size = 3):
@@ -111,18 +117,13 @@ class Astroid:
             first = [self.nodes[x][0], self.nodes[x][1]]
             last = [self.nodes[x+1][0], self.nodes[x+1][1]]
             pygame.draw.line(screen, self.color, first, last, 1)
-            #pygame.draw.circle(screen, GREEN, self.nodes[x], 3)
+            
             
         first = (self.nodes[0][0], self.nodes[0][1])
         last = (self.nodes[-1][0], self.nodes[-1][1])
         
         pygame.draw.line(screen, self.color, first, last, 1)
 
-def adjustMiddle(postion, middle, radius, dist):
-    if -radius < postion-middle < radius:
-        return postion + ([1,-1][random.randint(0,1)] * dist)
-    else:
-        return postion
 
 class Astroids:
     
@@ -167,10 +168,10 @@ class Astroids:
                 size = None
                 numNew = None
                 if astroid.size == 3:
-                    numNew = 3
+                    numNew = 2
                     size = 2
                 elif astroid.size == 2:
-                    numNew = 4
+                    numNew = 2
                     size = 1
                 else:
                     numNew = 0
@@ -225,6 +226,8 @@ class Ship:
         self.backLeft = [0,0]
         self.backRight = [0,0]
         self.rocketTip = [0,0]
+        self.rocketBackLeft = [0,0]
+        self.rocketBackRight = [0,0]
         self.vel = [0,0]
         self.acc = [0,0]
         self.scale = 10
@@ -263,7 +266,21 @@ class Ship:
         
         vector[0] = self.center[0] + (math.cos(self.rad+offset) * scale)
         vector[1] = self.center[1] + (math.sin(self.rad+offset) * scale)   
-      
+    
+    def updateFlame(self):
+        
+        self.calcRotation(self.rocketTip, math.pi, 20)
+        
+        self.rocketBackLeft[0] = self.backLeft[0] - ((self.backLeft[0] - self.backRight[0]) * .2)
+        self.rocketBackLeft[1] = self.backLeft[1] - ((self.backLeft[1] - self.backRight[1]) * .2)
+        
+        self.rocketBackRight[0] = self.backRight[0] - ((self.backRight[0] - self.backLeft[0]) * .2)
+        self.rocketBackRight[1] = self.backRight[1] - ((self.backRight[1] - self.backLeft[1]) * .2)
+        
+        
+
+    
+    
     def update(self):
         
         
@@ -273,6 +290,7 @@ class Ship:
             bullet.update()
             if bullet.deleteMe:
                 self.bullets.remove(bullet)
+        
         
         self.updateDead()
         
@@ -299,10 +317,15 @@ class Ship:
             self.rad -= .1
         if (not self.left and self.right):
             self.rad += .1
+            
+        if self.fire:
+            self.fire = False
         
         self.calcRotation(self.tip, 0, 17)
-        self.calcRotation(self.backLeft, math.pi * 2 * (5/8), 15) #G
-        self.calcRotation(self.backRight, math.pi * 2 * (3/8), 15) #B
+        self.calcRotation(self.backLeft, math.pi * 2 * (5/8), 15) 
+        self.calcRotation(self.backRight, math.pi * 2 * (3/8), 15) 
+        
+        self.updateFlame()
         
     
     def reset(self):
@@ -364,12 +387,9 @@ class Ship:
             return
         
         if self.up and not self.flicker % 10 <= 5:
-            pygame.draw.circle(screen, self.color, self.center, 2)
-        
-        if self.fire:
-            pygame.draw.circle(screen, self.color, self.center, 2)
-            self.fire = False
-        
+            pygame.draw.line(screen, self.color, self.rocketTip, self.rocketBackLeft, 2)
+            pygame.draw.line(screen, self.color, self.rocketTip, self.rocketBackRight, 2)
+
         pygame.draw.line(screen, self.color, self.tip, self.backLeft, 2)
         pygame.draw.line(screen, self.color, self.tip, self.backRight, 2)
         pygame.draw.line(screen, self.color, self.backLeft, self.backRight, 2)
@@ -380,6 +400,7 @@ class Hud:
     def __init__(self):
         self.dummyShips = [Ship(), Ship(), Ship()]
         self.lives = 3
+        
         for i,ship in enumerate(self.dummyShips):
             ship.center[0] = 25 + (i * 30)
             ship.center[1] = 30
