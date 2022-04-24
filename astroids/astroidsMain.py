@@ -200,7 +200,7 @@ class Bullet:
         self.start = point[:]
         self.r = 3
         self.velRad = rad
-        self.speed = 9
+        self.speed = 12
         self.color = (255,255,255)
         self.xv = math.cos(rad) * self.speed 
         self.yv = math.sin(rad) * self.speed
@@ -249,8 +249,9 @@ class Ship:
         self.friction = .995
         self.hit = False
         self.flicker = 0
-        self.deadShip = [[[0,0]]]
         self.deathCounter = 120
+        self.deadShip = [[[0,0]]]
+        
          
     def die(self):
         self.hit = True
@@ -287,7 +288,6 @@ class Ship:
     
     
     def update(self):
-        
         
         wrap(self.center, 0)
         
@@ -406,17 +406,22 @@ class Hud:
         self.dummyShips = [Ship(), Ship(), Ship()]
         self.lives = 3
         self.score = 0
-        self.color = (255,255,255)
+        self.color = (255,255,255)      
         self.font = pygame.font.SysFont('arial', 30)
+        
         self.textScore = self.font.render(str(self.score),True,self.color)
         self.title = self.font.render("ASTROIDS",True,self.color)
         self.gameOverText = self.font.render("GAME OVER",True,self.color)
         self.youWon = self.font.render("YOU WON",True,self.color)
+        
         self.startScreen = True
         self.inGame = False
         self.gameOver = False
         self.wonLevel = False
+        
         self.titleLoc = self.title.get_rect(center = screen.get_rect().center)
+        self.gameOverTextLoc = self.gameOverText.get_rect(center = screen.get_rect().center)
+        self.youWonLoc = self.youWon.get_rect(center = screen.get_rect().center)
         
         
         for i,ship in enumerate(self.dummyShips):
@@ -455,9 +460,7 @@ class Hud:
         self.textScore = self.font.render(str(self.score),True,self.color)
     
     def draw(self):
-        
-
-        
+             
         if self.startScreen:
             screen.blit(self.title, [self.titleLoc[0], self.titleLoc[1]-50])
         if self.inGame:
@@ -465,12 +468,10 @@ class Hud:
                 self.dummyShips[x].draw()
             screen.blit(self.textScore, [10,5])
         if self.gameOver:
-            screen.blit(self.gameOverText, [self.titleLoc[0], self.titleLoc[1]-50])
+            screen.blit(self.gameOverText, [self.gameOverTextLoc[0], self.gameOverTextLoc[1]-50])
         if self.wonLevel:
-            screen.blit(self.youWon, [self.titleLoc[0], self.titleLoc[1]-50])
+            screen.blit(self.youWon, [self.youWonLoc[0], self.youWonLoc[1]-50])
         
-
-
 ship = Ship()
 astroids = Astroids()
 hud = Hud()
@@ -481,13 +482,13 @@ while not done:
         
         if event.type == pygame.QUIT:
             done = True
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:           
             if hud.startScreen:
                 ship = Ship()
                 astroids = Astroids()
             elif hud.inGame:
                 ship.fireGun()
-            hud.hitSpace()
+            hud.hitSpace()           
         if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
             ship.startLeftTurn()
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
@@ -501,20 +502,19 @@ while not done:
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             ship.stopRocket()
 
-
     hud.update()
     
     if hud.inGame:
     
-        astroids.checkCollisons(ship, hud)   
-        astroids.update() 
+           
+        astroids.update()
+        astroids.checkCollisons(ship, hud)  
         ship.update()
+          
         
         astroids.draw()
         ship.draw()
-
-        
-        
+      
     hud.draw()
                 
     pygame.display.flip()
