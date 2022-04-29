@@ -38,12 +38,21 @@ class GameObject:
 class Paddle(GameObject):
     
     def __init__(self,x,y):
-        self.widthScale = 5
+        self.widthScale = 10
         self.paddleV = 10
         super().__init__(x,y)
         self.y -= self.r*self.widthScale//2
         self.up = False
         self.down = False
+        
+    def update(self):
+        
+        if self.y < 0 and self.yv < 0:
+            return
+        elif self.y > height-(self.r*self.widthScale) and self.yv > 0:
+            return
+        self.y += self.yv
+            
         
     def moveUp(self):
         self.up = True
