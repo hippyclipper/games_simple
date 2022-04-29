@@ -29,7 +29,8 @@ class GameObject:
         self.color = WHITE
         
     def update(self):
-        pass
+        self.x += self.xv
+        self.y += self.yv
         
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)      
@@ -38,8 +39,32 @@ class Paddle(GameObject):
     
     def __init__(self,x,y):
         self.widthScale = 5
+        self.paddleV = 10
         super().__init__(x,y)
         self.y -= self.r*self.widthScale//2
+        self.up = False
+        self.down = False
+        
+    def moveUp(self):
+        self.up = True
+        self.yv = -self.paddleV
+    
+    def moveDown(self):
+        self.down = True
+        self.yv = self.paddleV
+    
+    def stop(self, direction):
+        if direction == "up":
+            self.up = False
+        else:
+            self.down = False
+            
+        if not self.up and not self.down:
+            self.yv = 0
+        elif self.up:
+            self.yv = -self.paddleV
+        else:
+            self.yv = self.paddleV
         
     def draw(self):
         #[x, y, width, height]
@@ -48,6 +73,7 @@ class Paddle(GameObject):
 class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
+           
         
 class RightPaddle(Paddle):
     def __init__(self,x,y):
@@ -64,6 +90,14 @@ class Game:
         self.paddleLeft = LeftPaddle(0, height//2)
         self.paddleRight = RightPaddle(width, height//2)
         self.ball = Ball(width//2, height//2)
+        
+    def buttonPressed(self, direction, pressed):
+        if direction == "down" and pressed:
+            self.paddleLeft.moveDown()
+        elif direction =="up" and pressed:
+            self.paddleLeft.moveUp()
+        elif direction in ["up", "down"] and not pressed:
+            self.paddleLeft.stop(direction)
         
     def update(self):
         self.paddleLeft.update()
@@ -82,6 +116,20 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+            
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:           
+            pass
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+            game.buttonPressed("up", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_UP:
+            game.buttonPressed("up", False)
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+            game.buttonPressed("down", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+            game.buttonPressed("down", False)
+        
             
     game.draw()
     game.update()
