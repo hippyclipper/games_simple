@@ -13,9 +13,69 @@ clock = pygame.time.Clock()
 RED = (255,0,0)
 BLUE = (0,0,255)
 GREEN = (0,255,0)
+WHITE = (250, 250, 250)
 BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
+
+class GameObject:
+    
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+        self.xv = 0 
+        self.yv = 0
+        self.r = 10
+        self.color = WHITE
+        
+    def update(self):
+        pass
+        
+    def draw(self):
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)      
+        
+class Paddle(GameObject):
+    
+    def __init__(self,x,y):
+        self.widthScale = 5
+        super().__init__(x,y)
+        self.y -= self.r*self.widthScale//2
+        
+    def draw(self):
+        #[x, y, width, height]
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale ))
+        
+class LeftPaddle(Paddle):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        
+class RightPaddle(Paddle):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.x -= self.r
+    
+class Ball(GameObject):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+  
+class Game:
+    
+    def __init__(self):
+        self.paddleLeft = LeftPaddle(0, height//2)
+        self.paddleRight = RightPaddle(width, height//2)
+        self.ball = Ball(width//2, height//2)
+        
+    def update(self):
+        self.paddleLeft.update()
+        self.paddleRight.update()
+        self.ball.update()
+    
+    def draw(self):
+        self.paddleLeft.draw()
+        self.paddleRight.draw()
+        self.ball.draw()
+
+game = Game()
 
 while not done:
     
@@ -23,7 +83,8 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
             
-    pygame.draw.circle(screen, RED, (width//2, height//2), 100)      
+    game.draw()
+    game.update()
             
     pygame.display.flip()
     clock.tick(60)
