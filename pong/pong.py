@@ -87,6 +87,15 @@ class Paddle(GameObject):
 class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
+        
+    def handleEvent(self,direction,pressed):
+        
+        if direction == "down" and pressed:
+            self.moveDown()
+        elif direction =="up" and pressed:
+            self.moveUp()
+        elif direction in ["up", "down"] and not pressed:
+            self.stop(direction)        
            
         
 class RightPaddle(Paddle):
@@ -123,13 +132,8 @@ class Game:
         self.ball = Ball(width//2, height//2)
         self.midLine = MidLine(width//2, 0)
         
-    def buttonPressed(self, direction, pressed):
-        if direction == "down" and pressed:
-            self.paddleLeft.moveDown()
-        elif direction =="up" and pressed:
-            self.paddleLeft.moveUp()
-        elif direction in ["up", "down"] and not pressed:
-            self.paddleLeft.stop(direction)
+    def buttonEvent(self, direction, pressed):
+        self.paddleLeft.handleEvent(direction, pressed)
         
     def update(self):
         self.paddleLeft.update()
@@ -155,14 +159,14 @@ while not done:
             pass
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
-            game.buttonPressed("up", True)
+            game.buttonEvent("up", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
-            game.buttonPressed("up", False)
+            game.buttonEvent("up", False)
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-            game.buttonPressed("down", True)
+            game.buttonEvent("down", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-            game.buttonPressed("down", False)
+            game.buttonEvent("down", False)
         
             
     game.draw()
