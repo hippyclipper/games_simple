@@ -32,6 +32,11 @@ class GameObject:
         self.x += self.xv
         self.y += self.yv
         
+    def calcVector(self, rad, scale):
+        x = math.cos(rad) * scale
+        y = math.sin(rad) * scale
+        return (x,y)
+        
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)      
         
@@ -92,6 +97,23 @@ class RightPaddle(Paddle):
 class Ball(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
+        self.maxVel = 5
+        self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
+        
+class MidLine(GameObject):
+    
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.x -= self.r//2
+        self.numSquares = 20
+        self.widthScale = 3
+        self.color = (220, 220, 220)
+        
+    def draw(self):
+        for x in range(self.numSquares):
+            pygame.draw.rect(screen, self.color, pygame.Rect(self.x, x*50, self.r, self.r*self.widthScale ))
+            
+        
   
 class Game:
     
@@ -99,6 +121,7 @@ class Game:
         self.paddleLeft = LeftPaddle(0, height//2)
         self.paddleRight = RightPaddle(width, height//2)
         self.ball = Ball(width//2, height//2)
+        self.midLine = MidLine(width//2, 0)
         
     def buttonPressed(self, direction, pressed):
         if direction == "down" and pressed:
@@ -114,9 +137,11 @@ class Game:
         self.ball.update()
     
     def draw(self):
+        self.midLine.draw()
         self.paddleLeft.draw()
         self.paddleRight.draw()
         self.ball.draw()
+
 
 game = Game()
 
