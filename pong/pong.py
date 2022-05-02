@@ -1,10 +1,10 @@
 import pygame
 import random
 import math
-
+#==========================================================================================================================
 screenScale = 8
 width = int(100 * screenScale)
-height = width
+height = width//1.25
 pygame.init()
 pygame.mixer.init()
 pygame.font.init()
@@ -18,6 +18,7 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
+#==========================================================================================================================
 class GameObject:
     
     def __init__(self,x,y):
@@ -39,7 +40,7 @@ class GameObject:
         
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)      
-        
+#==========================================================================================================================        
 class Paddle(GameObject):
     
     def __init__(self,x,y):
@@ -83,7 +84,7 @@ class Paddle(GameObject):
     def draw(self):
         #[x, y, width, height]
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale ))
-        
+#==========================================================================================================================        
 class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
@@ -95,20 +96,30 @@ class LeftPaddle(Paddle):
         elif direction =="up" and pressed:
             self.moveUp()
         elif direction in ["up", "down"] and not pressed:
-            self.stop(direction)        
-           
-        
+            self.stop(direction)                   
+#==========================================================================================================================        
 class RightPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.x -= self.r
-    
+#==========================================================================================================================    
 class Ball(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.maxVel = 5
-        self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
+        #self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
+        self.xv, self.yv = self.calcVector(math.pi*1.40, self.maxVel)
         
+    def update(self):
+        
+        if self.y < 0 + self.r:
+            self.xv, self.yv = pygame.math.Vector2([self.xv,self.yv]).normalize().reflect(pygame.math.Vector2([0,1])) * self.maxVel
+        elif self.y > height - self.r:
+            self.xv, self.yv = pygame.math.Vector2([self.xv,self.yv]).normalize().reflect(pygame.math.Vector2([0,-1])) * self.maxVel
+            
+        self.x += self.xv
+        self.y += self.yv
+#==========================================================================================================================        
 class MidLine(GameObject):
     
     def __init__(self,x,y):
@@ -121,9 +132,7 @@ class MidLine(GameObject):
     def draw(self):
         for x in range(self.numSquares):
             pygame.draw.rect(screen, self.color, pygame.Rect(self.x, x*50, self.r, self.r*self.widthScale ))
-            
-        
-  
+#==========================================================================================================================              
 class Game:
     
     def __init__(self):
@@ -146,7 +155,6 @@ class Game:
         self.paddleRight.draw()
         self.ball.draw()
 
-
 game = Game()
 
 while not done:
@@ -167,8 +175,7 @@ while not done:
             game.buttonEvent("down", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
             game.buttonEvent("down", False)
-        
-            
+                   
     game.draw()
     game.update()
             
@@ -176,6 +183,6 @@ while not done:
     clock.tick(60)
     screen.fill(BACKGROUND)
     
-#=============================================================
+#==========================================================================================================================
 pygame.display.quit()
 pygame.quit()    
