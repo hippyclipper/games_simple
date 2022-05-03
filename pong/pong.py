@@ -58,8 +58,7 @@ class Paddle(GameObject):
         elif self.y > height-(self.r*self.widthScale) and self.yv > 0:
             return
         self.y += self.yv
-            
-        
+                   
     def moveUp(self):
         self.up = True
         self.yv = -self.paddleV
@@ -109,13 +108,31 @@ class Ball(GameObject):
         self.maxVel = 5
         #self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
         self.xv, self.yv = self.calcVector(math.pi*1.40, self.maxVel)
+        self.waitFrames = 30
+        
+    def reset(self):
+        self.x = width//2
+        self.y = height//2
+        self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
+        self.waitFrames = 30
         
     def update(self):
+        
+        if self.waitFrames > 0:
+            self.waitFrames -= 1
+            return
         
         if self.y < 0 + self.r:
             self.xv, self.yv = pygame.math.Vector2([self.xv,self.yv]).normalize().reflect(pygame.math.Vector2([0,1])) * self.maxVel
         elif self.y > height - self.r:
             self.xv, self.yv = pygame.math.Vector2([self.xv,self.yv]).normalize().reflect(pygame.math.Vector2([0,-1])) * self.maxVel
+            
+        if self.x > width+self.r:
+            self.reset()
+            return
+        elif self.x < 0-self.r:
+            self.reset()
+            return
             
         self.x += self.xv
         self.y += self.yv
@@ -127,7 +144,7 @@ class MidLine(GameObject):
         self.x -= self.r//2
         self.numSquares = 20
         self.widthScale = 3
-        self.color = (220, 220, 220)
+        self.color = WHITE
         
     def draw(self):
         for x in range(self.numSquares):
@@ -170,7 +187,7 @@ while not done:
             game.buttonEvent("up", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
             game.buttonEvent("up", False)
-        
+            
         if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
             game.buttonEvent("down", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
