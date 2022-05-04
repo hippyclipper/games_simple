@@ -138,14 +138,17 @@ class RightPaddle(Paddle):
         self.x -= self.r
 #==========================================================================================================================    
 class Ball(GameObject):
+    
     def __init__(self,x,y):
         super().__init__(x,y)
         self.maxVel = 5
         #self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
         self.xv, self.yv = self.calcVector(math.pi*1.40, self.maxVel)
         self.waitFrames = 30
+        self.score = ""
         
-    def reset(self):
+    def reset(self, score):
+        self.score = score
         self.x = width//2
         self.y = height//2
         self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
@@ -163,10 +166,10 @@ class Ball(GameObject):
             self.xv, self.yv = pygame.math.Vector2([self.xv,self.yv]).normalize().reflect(pygame.math.Vector2([0,-1])) * self.maxVel
             
         if self.x > width+self.r:
-            self.reset()
+            self.reset("right")
             return
         elif self.x < 0-self.r:
-            self.reset()
+            self.reset("left")
             return
             
         self.x += self.xv
@@ -197,7 +200,19 @@ class Game:
     def buttonEvent(self, direction, pressed):
         self.paddleLeft.handleEvent(direction, pressed)
         
+    def handleCollisons(self):
+        
+        if self.ball.score == "right":
+            self.scoreBoard.score1 += 1
+            self.ball.score = ""
+        elif self.ball.score == "left":
+            self.scoreBoard.score2 += 1
+            self.ball.score = ""
+        #paddleLeft and ball
+        #scoreboard and ball 
+        
     def update(self):
+        self.handleCollisons()
         self.paddleLeft.update()
         self.paddleRight.update()
         self.ball.update()
