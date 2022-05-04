@@ -18,6 +18,10 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
+
+def circleLineCollison(lineStart, lineEnd, circleX, circleY, circleR):
+    pass
+
 #==========================================================================================================================
 class GameObject:
     
@@ -40,7 +44,38 @@ class GameObject:
         
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)      
-#==========================================================================================================================        
+#==========================================================================================================================
+        
+class ScoreBoard(GameObject):
+    
+    def __init__(self):
+        
+        super().__init__(0,0)
+        self.score1 = 0
+        self.score2 = 0
+        self.font = pygame.font.SysFont('arial', 50)
+        self.textScore1 = self.font.render(str(self.score1),True,self.color)
+        self.textScore2 = self.font.render(str(self.score2),True,self.color)
+        
+        self.score1loc = self.textScore1.get_rect(center = screen.get_rect().center)
+        self.score2loc = self.score1loc[:]
+        
+        self.score1loc[0] += width//4
+        self.score2loc[0] -= width//4
+        
+        self.score1loc[1] = 10
+        self.score2loc[1] = 10
+        
+            
+    def update(self):
+        self.textScore1 = self.font.render(str(self.score1),True,self.color)
+        self.textScore2 = self.font.render(str(self.score2),True,self.color)
+        
+    def draw(self):
+        screen.blit(self.textScore1, self.score1loc)
+        screen.blit(self.textScore2, self.score2loc)
+
+        
 class Paddle(GameObject):
     
     def __init__(self,x,y):
@@ -154,6 +189,7 @@ class Game:
     
     def __init__(self):
         self.paddleLeft = LeftPaddle(0, height//2)
+        self.scoreBoard = ScoreBoard()
         self.paddleRight = RightPaddle(width, height//2)
         self.ball = Ball(width//2, height//2)
         self.midLine = MidLine(width//2, 0)
@@ -165,12 +201,14 @@ class Game:
         self.paddleLeft.update()
         self.paddleRight.update()
         self.ball.update()
+        self.scoreBoard.update()
     
     def draw(self):
         self.midLine.draw()
         self.paddleLeft.draw()
         self.paddleRight.draw()
         self.ball.draw()
+        self.scoreBoard.draw()
 
 game = Game()
 
