@@ -18,10 +18,6 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
-
-def circleLineCollison(lineStart, lineEnd, circleX, circleY, circleR):
-    pass
-
 #==========================================================================================================================
 class GameObject:
     
@@ -75,7 +71,7 @@ class ScoreBoard(GameObject):
         screen.blit(self.textScore1, self.score1loc)
         screen.blit(self.textScore2, self.score2loc)
 
-        
+#==========================================================================================================================       
 class Paddle(GameObject):
     
     def __init__(self,x,y):
@@ -87,7 +83,7 @@ class Paddle(GameObject):
         self.down = False
         self.offset = 0
         
-    def vScale(self, bPlace, pRange):    
+    def radScale(self, bPlace, pRange):    
         return 1-(bPlace/pRange)
     
     def handleCollison(self, ball):
@@ -99,14 +95,11 @@ class Paddle(GameObject):
             paddleTop = self.y - ball.r
             pRange = paddleBottom - paddleTop
             bPlace = paddleBottom - ball.y 
-            vectorScale = self.vScale(bPlace, pRange)
+            radScale = self.radScale(bPlace, pRange)
             down = math.pi/2
             up = math.pi+math.pi/2
-            vec = self.offset + math.pi + down + abs(up-down)*vectorScale
-            ball.xv, ball.yv = ball.calcVector(vec, ball.maxVel)
-
-            
-
+            rad = self.offset + math.pi + down + abs(up-down)*radScale
+            ball.xv, ball.yv = ball.calcVector(rad, ball.maxVel)
         
     def update(self):
         
@@ -138,14 +131,13 @@ class Paddle(GameObject):
             self.yv = self.paddleV
         
     def draw(self):
-        #[x, y, width, height]
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale ))
+        
 #==========================================================================================================================        
 class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
-        
-        
+                
     def handleEvent(self,direction,pressed):
         
         if direction == "down" and pressed:
@@ -153,25 +145,27 @@ class LeftPaddle(Paddle):
         elif direction =="up" and pressed:
             self.moveUp()
         elif direction in ["up", "down"] and not pressed:
-            self.stop(direction)                   
-#==========================================================================================================================        
+            self.stop(direction)
+            
+#==========================================================================================================================
+            
 class RightPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.x -= self.r
         self.offset = math.pi
         
-    def vScale(self, bPlace, pRange):    
+    def radScale(self, bPlace, pRange):    
         return bPlace/pRange
         
-#==========================================================================================================================    
+#==========================================================================================================================
+    
 class Ball(GameObject):
     
     def __init__(self,x,y):
         super().__init__(x,y)
         self.maxVel = 5
         self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
-        #self.xv, self.yv = self.calcVector(math.pi+.002, self.maxVel)
         self.waitFrames = 30
         self.score = ""
         
@@ -202,7 +196,9 @@ class Ball(GameObject):
             
         self.x += self.xv
         self.y += self.yv
-#==========================================================================================================================        
+        
+#==========================================================================================================================
+        
 class MidLine(GameObject):
     
     def __init__(self,x,y):
@@ -215,7 +211,9 @@ class MidLine(GameObject):
     def draw(self):
         for x in range(self.numSquares):
             pygame.draw.rect(screen, self.color, pygame.Rect(self.x, x*50, self.r, self.r*self.widthScale ))
-#==========================================================================================================================              
+            
+#==========================================================================================================================
+            
 class Game:
     
     def __init__(self):
@@ -239,8 +237,6 @@ class Game:
             
         self.paddleLeft.handleCollison(self.ball)
         self.paddleRight.handleCollison(self.ball)
-        #paddleLeft and ball
-        #scoreboard and ball 
         
     def update(self):
         self.handleCollisons()
@@ -255,7 +251,9 @@ class Game:
         self.paddleRight.draw()
         self.ball.draw()
         self.scoreBoard.draw()
-
+        
+#==========================================================================================================================
+        
 game = Game()
 
 while not done:
