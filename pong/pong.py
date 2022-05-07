@@ -75,10 +75,10 @@ class ScoreBoard(GameObject):
 class Paddle(GameObject):
     
     def __init__(self,x,y):
-        self.widthScale = 10
-        self.paddleV = 10
+        self.widthScale = 8
+        self.paddleV = 12
         super().__init__(x,y)
-        self.y -= self.r*self.widthScale//2
+        self.y -= self.r*self.widthScale/2
         self.up = False
         self.down = False
         self.offset = 0
@@ -100,6 +100,7 @@ class Paddle(GameObject):
             up = math.pi+math.pi/2
             rad = self.offset + math.pi + down + abs(up-down)*radScale
             ball.xv, ball.yv = ball.calcVector(rad, ball.maxVel)
+            ball.maxVel += .2
         
     def update(self):
         
@@ -150,26 +151,47 @@ class LeftPaddle(Paddle):
 #==========================================================================================================================
             
 class RightPaddle(Paddle):
+    
     def __init__(self,x,y):
         super().__init__(x,y)
         self.x -= self.r
         self.offset = math.pi
+        self.aiMidOffset = 10
+        self.aiDeadZone = 15
         
     def radScale(self, bPlace, pRange):    
         return bPlace/pRange
-        
+    
+    def makeChoice(self, ball):
+        midPoint = self.y + (self.r*self.widthScale*.5)
+        if ball.xv < 0 or ball.x > self.x-self.aiDeadZone:
+            self.stop()
+            return
+        elif ball.y > midPoint+self.aiMidOffset:
+            self.moveDown()
+        elif ball.y < midPoint-self.aiMidOffset:
+            self.moveUp()
+        else:
+            self.stop()
+            
+    
+    def stop(self):
+        self.down = False
+        self.up = False
+        self.yv = 0
 #==========================================================================================================================
     
 class Ball(GameObject):
     
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.maxVel = 5
+        self.maxVel = 12
         self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
         self.waitFrames = 30
         self.score = ""
         
     def reset(self, score):
+        self.maxVel = 12
         self.score = score
         self.x = width//2
         self.y = height//2
@@ -237,6 +259,7 @@ class Game:
             
         self.paddleLeft.handleCollison(self.ball)
         self.paddleRight.handleCollison(self.ball)
+        self.paddleRight.makeChoice(self.ball)
         
     def update(self):
         self.handleCollisons()
