@@ -86,6 +86,12 @@ class Paddle(GameObject):
         self.up = False
         self.down = False
         
+    def handleCollison(self, ball):
+        ballRect = pygame.Rect(ball.x-ball.r, ball.y-ball.r, ball.r*2, ball.r*2)
+        paddleRect = pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale )
+        if ballRect.colliderect(paddleRect):
+            print("hit") 
+        
     def update(self):
         
         if self.y < 0 and self.yv < 0:
@@ -208,6 +214,9 @@ class Game:
         elif self.ball.score == "left":
             self.scoreBoard.score2 += 1
             self.ball.score = ""
+            
+        self.paddleLeft.handleCollison(self.ball)
+        self.paddleRight.handleCollison(self.ball)
         #paddleLeft and ball
         #scoreboard and ball 
         
