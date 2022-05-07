@@ -85,12 +85,28 @@ class Paddle(GameObject):
         self.y -= self.r*self.widthScale//2
         self.up = False
         self.down = False
+        self.offset = 0
         
+    def vScale(self, bPlace, pRange):    
+        return 1-(bPlace/pRange)
+    
     def handleCollison(self, ball):
+        
         ballRect = pygame.Rect(ball.x-ball.r, ball.y-ball.r, ball.r*2, ball.r*2)
         paddleRect = pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale )
         if ballRect.colliderect(paddleRect):
-            print("hit") 
+            paddleBottom = (self.r*self.widthScale) + self.y + ball.r
+            paddleTop = self.y - ball.r
+            pRange = paddleBottom - paddleTop
+            bPlace = paddleBottom - ball.y 
+            vectorScale = self.vScale(bPlace, pRange)
+            down = math.pi/2
+            up = math.pi+math.pi/2
+            vec = self.offset + math.pi + down + abs(up-down)*vectorScale
+            ball.xv, ball.yv = ball.calcVector(vec, ball.maxVel)
+
+            
+
         
     def update(self):
         
@@ -129,6 +145,7 @@ class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
         
+        
     def handleEvent(self,direction,pressed):
         
         if direction == "down" and pressed:
@@ -142,14 +159,19 @@ class RightPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.x -= self.r
+        self.offset = math.pi
+        
+    def vScale(self, bPlace, pRange):    
+        return bPlace/pRange
+        
 #==========================================================================================================================    
 class Ball(GameObject):
     
     def __init__(self,x,y):
         super().__init__(x,y)
         self.maxVel = 5
-        #self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
-        self.xv, self.yv = self.calcVector(math.pi*1.40, self.maxVel)
+        self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
+        #self.xv, self.yv = self.calcVector(math.pi+.002, self.maxVel)
         self.waitFrames = 30
         self.score = ""
         
