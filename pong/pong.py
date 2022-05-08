@@ -134,7 +134,8 @@ class Paddle(GameObject):
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.r, self.r*self.widthScale ))
         
-#==========================================================================================================================        
+#==========================================================================================================================
+        
 class LeftPaddle(Paddle):
     def __init__(self,x,y):
         super().__init__(x,y)
@@ -198,6 +199,14 @@ class Ball(GameObject):
         self.xv, self.yv = self.calcVector(random.uniform(-.25*math.pi, .25*math.pi)+[0,math.pi][random.randint(0,1)], self.maxVel)
         self.waitFrames = 30
         
+    def handleScoreBoard(self, scoreBoard):
+        if self.score == "right":
+            scoreBoard.score1 += 1
+            self.score = ""
+        elif self.score == "left":
+            scoreBoard.score2 += 1
+            self.score = ""
+        
     def update(self):
         
         if self.waitFrames > 0:
@@ -249,14 +258,7 @@ class Game:
         self.paddleLeft.handleEvent(direction, pressed)
         
     def handleCollisons(self):
-        
-        if self.ball.score == "right":
-            self.scoreBoard.score1 += 1
-            self.ball.score = ""
-        elif self.ball.score == "left":
-            self.scoreBoard.score2 += 1
-            self.ball.score = ""
-            
+        self.ball.handleScoreBoard(self.scoreBoard)
         self.paddleLeft.handleCollison(self.ball)
         self.paddleRight.handleCollison(self.ball)
         self.paddleRight.makeChoice(self.ball)
