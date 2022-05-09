@@ -18,6 +18,8 @@ WHITE = (255,255,255)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
+#==========================================================================================================================
+
 class GameObject:
     
     def __init__(self):
@@ -41,7 +43,8 @@ class GameObject:
     def draw(self):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)     
 
-
+#==========================================================================================================================
+        
 class Ball(GameObject):
     
     def __init__(self,x,y):
@@ -49,37 +52,51 @@ class Ball(GameObject):
         self.x = x
         self.y = y
         
+#==========================================================================================================================
+        
 class Square(GameObject):
     
     def __init__(self,x,y):
         super().__init__()
         self.x = x
-        self.y = y
-        self.h = 5
-        self.w = self.h*25
+        self.y = y 
+        self.h = 10
+        self.w = 150
         
     def draw(self):
         
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
-
+        
+#==========================================================================================================================
+        
 class Player(Square):
     def __init__(self):
         super().__init__(width//2, height)
         self.x -= (self.w//2)
-        self.y -= self.h+10 
-
+        self.y -= self.h+10
+        
+    def handleEvent(self, direction, pressed):
+        print(direction)
+        
+#==========================================================================================================================
+        
 class Game:
     
     def __init__(self):
         self.ball = Ball(width//2, height//2)
         self.player = Player()
+    
+    def buttonEvent(self, direction, pressed):
+        self.player.handleEvent(direction, pressed)
+        
     def update(self):
         self.ball.update()
-        self.player.update()
-        
+        self.player.update()        
     def draw(self):
         self.ball.draw()
         self.player.draw()
+        
+#==========================================================================================================================
         
 game = Game()
 
@@ -89,6 +106,20 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
             
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:           
+            pass
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+            game.buttonEvent("left", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
+            game.buttonEvent("left", False)
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            game.buttonEvent("right", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
+            game.buttonEvent("right", False)
+
+            
     game.draw()
     game.update()      
             
@@ -97,5 +128,6 @@ while not done:
     screen.fill(BACKGROUND)
     
 #=============================================================
+    
 pygame.display.quit()
 pygame.quit()    
