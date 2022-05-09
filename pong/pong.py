@@ -201,10 +201,10 @@ class Ball(GameObject):
         
     def handleScoreBoard(self, scoreBoard):
         if self.score == "right":
-            scoreBoard.score1 += 1
+            scoreBoard.score2 += 1
             self.score = ""
         elif self.score == "left":
-            scoreBoard.score2 += 1
+            scoreBoard.score1 += 1
             self.score = ""
         
     def update(self):
