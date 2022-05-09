@@ -76,6 +76,12 @@ class Player(Square):
         self.y -= self.h+10
         self.left = False
         self.right = False
+    
+    def update(self):
+        
+        if self.x+self.xv < 0 or self.x+self.xv > width-(self.w):
+            return 
+        self.x += self.xv
         
     def moveLeft(self):
         self.left = True
