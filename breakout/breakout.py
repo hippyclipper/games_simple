@@ -74,9 +74,39 @@ class Player(Square):
         super().__init__(width//2, height)
         self.x -= (self.w//2)
         self.y -= self.h+10
+        self.left = False
+        self.right = False
         
-    def handleEvent(self, direction, pressed):
-        print(direction)
+    def moveLeft(self):
+        self.left = True
+        self.xv = -self.maxV
+    
+    def moveRight(self):
+        self.right = True
+        self.xv = self.maxV
+        
+    def stop(self, direction):
+
+        if direction == "right":
+            self.right = False
+        else:
+            self.left = False
+
+        if not self.left and not self.right:
+            self.xv = 0
+        elif self.left:
+            self.xv = -self.maxV
+        else:
+            self.xv = self.maxV
+            
+    def handleEvent(self,direction,pressed):
+        
+        if direction == "left" and pressed:
+            self.moveLeft()
+        elif direction =="right" and pressed:
+            self.moveRight()
+        elif direction in ["right", "left"] and not pressed:
+            self.stop(direction)
         
 #==========================================================================================================================
         
@@ -85,17 +115,19 @@ class Game:
     def __init__(self):
         self.ball = Ball(width//2, height//2)
         self.player = Player()
+        self.objects = [self.ball, self.player]
     
     def buttonEvent(self, direction, pressed):
         self.player.handleEvent(direction, pressed)
         
     def update(self):
-        self.ball.update()
-        self.player.update()        
+        for obj in self.objects:
+            obj.update()
+      
     def draw(self):
-        self.ball.draw()
-        self.player.draw()
-        
+        for obj in self.objects:
+            obj.draw()
+       
 #==========================================================================================================================
         
 game = Game()
@@ -118,7 +150,6 @@ while not done:
             game.buttonEvent("right", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
             game.buttonEvent("right", False)
-
             
     game.draw()
     game.update()      
