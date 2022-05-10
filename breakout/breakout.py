@@ -51,6 +51,7 @@ class Ball(GameObject):
         super().__init__()
         self.x = x
         self.y = y
+        self.maxV = 10
         self.hit = False
         self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,0), self.maxV)
         
@@ -95,15 +96,16 @@ class Blocks(Walls):
     
     def __init__(self):
         super().__init__()
-        self.numRow = 10
+        self.numRow = 7
         self.numCol = 10
-        self.w = 25
+        self.space = 10
+        self.w = (width-(self.space*2))//self.numCol
         self.h = 30
-        self.blocks = [Square(width//2, 350)]
+        self.blocks = []
         
         for x in range(self.numCol):
             for y in range(self.numRow):
-                square = Square((10+self.w)*x+10, y*(self.h+10)+10)
+                square = Square((self.space+self.w)*x+self.space, y*(self.h+self.space)+self.space)
                 square.w = self.w
                 square.h = self.h
                 self.blocks.append(square)
