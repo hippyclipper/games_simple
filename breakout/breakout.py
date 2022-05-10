@@ -51,6 +51,8 @@ class Ball(GameObject):
         super().__init__()
         self.x = x
         self.y = y
+        self.hit = False
+        self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,.2), self.maxV)
         
 #==========================================================================================================================
         
@@ -62,14 +64,35 @@ class Square(GameObject):
         self.y = y 
         self.h = 10
         self.w = 150
-        
-    def draw(self):
-        
+               
+    def draw(self):       
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
         
 #==========================================================================================================================
         
+class Walls:
+    
+    def __init__(self):
+        
+        self.top = Square(0,0)
+        self.top.w = width
+        self.top.h = 40
+        self.top.y -= self.top.h
+        
+        self.left = Square(0,0)
+        self.left.w = 40
+        self.left.h = height
+        self.left.x -= self.left.w
+        
+        self.right = Square(width,0)
+        self.right.w = 40
+        self.right.h = height     
+        
+        self.blocks = [self.right, self.left, self.top]
+           
+#==========================================================================================================================        
 class Player(Square):
+    
     def __init__(self):
         super().__init__(width//2, height)
         self.x -= (self.w//2)
@@ -77,8 +100,7 @@ class Player(Square):
         self.left = False
         self.right = False
     
-    def update(self):
-        
+    def update(self):     
         if self.x+self.xv < 0 or self.x+self.xv > width-(self.w):
             return 
         self.x += self.xv
@@ -115,24 +137,71 @@ class Player(Square):
             self.stop(direction)
         
 #==========================================================================================================================
+class CollisionHandler:
+    
+    def __init__(self):
+        pass
+    
+    def ballAndBlocks(self, ball, blocks):
+        for block in blocks.blocks:
+            self.ballAndSquare(ball, block)
+    
+    def ballAndSquare(self, ball, square):
         
+        ballRect = pygame.Rect(ball.x-ball.r, ball.y-ball.r, ball.r*2, ball.r*2)
+        squareRect = pygame.Rect(square.x, square.y, square.w, square.h )
+        normal = [0, 0]
+        collisonAxisIsY = False
+        
+        if not ballRect.colliderect(squareRect):
+            return
+
+        ballRect.y -= ball.yv
+
+        if not ballRect.colliderect(squareRect):
+            collisonAxisIsY = True
+        else:
+            collisonAxisIsY = False
+        
+        if collisonAxisIsY and ball.yv > 0:
+            normal = [0, -1]
+        elif collisonAxisIsY and ball.yv < 0:
+            normal = [0, 1]
+        elif not collisonAxisIsY and ball.xv > 0:
+            normal = [-1,0]
+        elif not collisonAxisIsY and ball.xv < 0:
+            normal = [1,0]
+
+        ball.xv, ball.yv = pygame.math.Vector2([ball.xv,ball.yv]).normalize().reflect(pygame.math.Vector2(normal)) * ball.maxV
+
+
+#==========================================================================================================================
 class Game:
     
     def __init__(self):
+
         self.ball = Ball(width//2, height//2)
         self.player = Player()
-        self.objects = [self.ball, self.player]
-    
+        self.walls = Walls()
+        
+        self.collisionHandler = CollisionHandler()
+        
+    def handleCollisions(self):
+        self.collisionHandler.ballAndSquare(self.ball, self.player)
+        self.collisionHandler.ballAndBlocks(self.ball, self.walls)
+  
     def buttonEvent(self, direction, pressed):
         self.player.handleEvent(direction, pressed)
         
     def update(self):
-        for obj in self.objects:
-            obj.update()
+        self.handleCollisions() 
+        self.ball.update() 
+        self.player.update()
       
     def draw(self):
-        for obj in self.objects:
-            obj.draw()
+        self.ball.draw()
+        self.player.draw()
+
        
 #==========================================================================================================================
         
@@ -141,7 +210,7 @@ game = Game()
 while not done:
     
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             done = True
             
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:           
