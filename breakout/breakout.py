@@ -53,8 +53,31 @@ class Ball(GameObject):
         self.y = y
         self.maxV = 10
         self.hit = False
+        self.waitTime = 30
         self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,0), self.maxV)
+    
+    
+    
+    def restart(self):
+        self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,0), self.maxV)
+        self.waitTime = 30
+        self.x = width//2
+        self.y = height//2
+    
+    def update(self):
+        if self.waitTime > 0:
+            self.waitTime -= 1
+            return
         
+        if self.y > height*2:
+            self.restart()
+            return
+        
+        self.x += self.xv
+        self.y += self.yv
+        
+ 
+            
 #==========================================================================================================================
         
 class Square(GameObject):
