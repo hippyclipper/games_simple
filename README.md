@@ -1,6 +1,6 @@
-[Asteroids](https://github.com/hippyclipper/games_simple/blob/main/astroids/astroidsMain.py)
+[Asteroids](https://github.com/hippyclipper/games_simple/blob/main/asteroids/asteroidsMain.py)
 
-![Asteroids](img/astroidsPic.png)
+![Asteroids](img/asteroidsPic.png)
 
 [Pong](https://github.com/hippyclipper/games_simple/blob/main/pong/pong.py)
 
