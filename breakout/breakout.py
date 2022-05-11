@@ -56,8 +56,6 @@ class Ball(GameObject):
         self.waitTime = 30
         self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,0), self.maxV)
     
-    
-    
     def restart(self):
         self.xv, self.yv = self.calcVector(math.pi*2*.25+random.uniform(-.2,0), self.maxV)
         self.waitTime = 30
@@ -75,9 +73,7 @@ class Ball(GameObject):
         
         self.x += self.xv
         self.y += self.yv
-        
- 
-            
+                  
 #==========================================================================================================================
         
 class Square(GameObject):
@@ -101,7 +97,6 @@ class Square(GameObject):
 class Walls:
     
     def __init__(self):
-        
         self.top = Square(0,0)
         self.top.w = width
         self.top.h = 40
@@ -117,6 +112,8 @@ class Walls:
         self.right.h = height     
         
         self.blocks = [self.right, self.left, self.top]
+
+#==========================================================================================================================
 
 class Blocks(Walls):
     
@@ -145,7 +142,8 @@ class Blocks(Walls):
         for block in self.blocks:
             block.draw()
 
-#==========================================================================================================================        
+#==========================================================================================================================
+            
 class Player(Square):
     
     def __init__(self):
@@ -170,7 +168,6 @@ class Player(Square):
         self.xv = self.maxV
         
     def stop(self, direction):
-
         if direction == "right":
             self.right = False
         else:
@@ -183,8 +180,7 @@ class Player(Square):
         else:
             self.xv = self.maxV
             
-    def handleEvent(self,direction,pressed):
-        
+    def handleEvent(self,direction,pressed): 
         if direction == "left" and pressed:
             self.moveLeft()
         elif direction =="right" and pressed:
@@ -204,10 +200,8 @@ class Player(Square):
         ball.xv, ball.yv = ball.calcVector(rad, ball.maxV)
         
 #==========================================================================================================================
+        
 class CollisionHandler:
-    
-#     def __init__(self):
-#         pass
     
     def ballAndBlocks(self, ball, blocks):
         for block in blocks.blocks:
@@ -248,19 +242,17 @@ class CollisionHandler:
             normal = [1,0]
         
         square.deleteMe = True
-        #ball.xv, ball.yv = pygame.math.Vector2([ball.xv,ball.yv]).normalize().reflect(pygame.math.Vector2(normal)) * ball.maxV
         square.adjustReflectionVector(ball, normal)
         
 #==========================================================================================================================
+        
 class Game:
     
     def __init__(self):
-
         self.ball = Ball(width//2, height//2)
         self.player = Player()
         self.walls = Walls()
-        self.blocks = Blocks()
-        
+        self.blocks = Blocks()      
         self.collisionHandler = CollisionHandler()
         
     def handleCollisions(self):
@@ -281,8 +273,7 @@ class Game:
         self.ball.draw()
         self.player.draw()
         self.blocks.draw()
-
-       
+     
 #==========================================================================================================================
         
 game = Game()
