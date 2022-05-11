@@ -89,7 +89,10 @@ class Square(GameObject):
         self.h = 10
         self.w = 150
         self.deleteMe = False
-               
+        
+    def adjustReflectionVector(self, ball, normal):
+        ball.xv, ball.yv = pygame.math.Vector2([ball.xv,ball.yv]).normalize().reflect(pygame.math.Vector2(normal)) * ball.maxV
+    
     def draw(self):       
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
         
@@ -151,6 +154,7 @@ class Player(Square):
         self.y -= self.h+10
         self.left = False
         self.right = False
+        self.maxV = 15
     
     def update(self):     
         if self.x+self.xv < 0 or self.x+self.xv > width-(self.w):
@@ -187,12 +191,23 @@ class Player(Square):
             self.moveRight()
         elif direction in ["right", "left"] and not pressed:
             self.stop(direction)
+            
+    def adjustReflectionVector(self, ball, normal=None):
+        left = self.x
+        right = self.x+self.w
+        paddleRange = right - left
+        normalBall = ball.x - self.x
+        precentPaddle = normalBall/paddleRange
+        leftDir = math.pi
+        rightDir = math.pi*2
+        rad = leftDir - precentPaddle*(leftDir-rightDir)
+        ball.xv, ball.yv = ball.calcVector(rad, ball.maxV)
         
 #==========================================================================================================================
 class CollisionHandler:
     
-    def __init__(self):
-        pass
+#     def __init__(self):
+#         pass
     
     def ballAndBlocks(self, ball, blocks):
         for block in blocks.blocks:
@@ -202,16 +217,15 @@ class CollisionHandler:
         
         ballRect = pygame.Rect(ball.x-ball.r, ball.y-ball.r, ball.r*2, ball.r*2)
         squareRect = pygame.Rect(square.x, square.y, square.w, square.h )
-        normal = [0, 0]
-        collisonAxisIsY = False
-        collisonAxisIsX = False
         
+        normal = [0, 0]
+        
+        collisonAxisIsY = False
+        collisonAxisIsX = False    
         
         ballRect.x += ball.xv
         ballRect.y +=  ball.yv
-        
-        pygame.draw.rect(screen, RED, ballRect)
-        
+                
         if not ballRect.colliderect(squareRect):
             return
         
@@ -232,12 +246,11 @@ class CollisionHandler:
             normal = [-1,0]
         elif collisonAxisIsX and ball.xv < 0:
             normal = [1,0]
-            
-        print(ball.y, squareRect.y+squareRect.h)
+        
         square.deleteMe = True
-        ball.xv, ball.yv = pygame.math.Vector2([ball.xv,ball.yv]).normalize().reflect(pygame.math.Vector2(normal)) * ball.maxV
-
-
+        #ball.xv, ball.yv = pygame.math.Vector2([ball.xv,ball.yv]).normalize().reflect(pygame.math.Vector2(normal)) * ball.maxV
+        square.adjustReflectionVector(ball, normal)
+        
 #==========================================================================================================================
 class Game:
     
