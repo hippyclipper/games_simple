@@ -83,17 +83,17 @@ class Player(GameObject):
         
     def handleButtonPress(self, direction):
         if direction == "up":
-            self.yv = -1
-            self.xv = 0
+            self.playerTiles[0].yv = -1
+            self.playerTiles[0].xv = 0
         elif direction == "down":
-            self.yv = 1
-            self.xv = 0
+            self.playerTiles[0].yv = 1
+            self.playerTiles[0].xv = 0
         elif direction == "left":
-            self.yv = 0
-            self.xv = -1
+            self.playerTiles[0].yv = 0
+            self.playerTiles[0].xv = -1
         elif direction == "right":
-            self.yv = 0
-            self.xv = 1
+            self.playerTiles[0].yv = 0
+            self.playerTiles[0].xv = 1
         elif direction == "space":
             print(direction)
             
@@ -107,8 +107,8 @@ class Player(GameObject):
             self.frameWait = self.frameWaitMax
             
         for tile in self.playerTiles:
-            tile.x += self.xv*self.stepW
-            tile.y += self.yv*self.stepH
+            tile.x += tile.xv*self.stepW
+            tile.y += tile.yv*self.stepH
     
     def draw(self):
         for tiles in self.playerTiles:
@@ -148,22 +148,22 @@ while not done:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
             game.buttonEvent("left", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
-            game.buttonEvent("left", False)
+            pass
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
             game.buttonEvent("right", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
-            game.buttonEvent("right", False)
+            pass
             
         if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
             game.buttonEvent("up", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_UP:
-            game.buttonEvent("up", False)
+            pass
             
         if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
             game.buttonEvent("down", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-            game.buttonEvent("down", False)            
+            pass           
             
             
     game.update()
