@@ -90,6 +90,13 @@ class Game:
     def __init__(self):
         self.tiles = Tiles()
         self.player = Player()
+               
+    def handleCollisions(self):
+        pass
+    
+    def buttonEvent(self, direction, pressed):
+        print(direction, pressed)
+        
     def update(self):
         self.player.update()
         self.tiles.update()
@@ -103,17 +110,20 @@ while not done:
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            done = True           
+            done = True
+            
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:           
-            pass     
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
-            pass
-        if event.type == pygame.KEYUP and event.key == pygame.K_UP:
-            pass      
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-            pass
-        if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-            pass
+            game.buttonEvent("space", True)
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+            game.buttonEvent("left", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
+            game.buttonEvent("left", False)
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            game.buttonEvent("right", True)
+        if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
+            game.buttonEvent("right", False)
             
     game.update()
     game.draw()
