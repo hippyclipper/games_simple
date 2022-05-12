@@ -80,8 +80,10 @@ class Player(GameObject):
         self.frameWaitMax = 10
         self.frameWait = self.frameWaitMax
         self.playerTiles = [PlayerSquare(self.x, self.y)]
+        self.addNew = False
         
     def handleButtonPress(self, direction):
+        
         if direction == "up":
             self.playerTiles[0].yv = -1
             self.playerTiles[0].xv = 0
@@ -95,7 +97,7 @@ class Player(GameObject):
             self.playerTiles[0].yv = 0
             self.playerTiles[0].xv = 1
         elif direction == "space":
-            print(direction)
+            self.addNew = True
             
     
     def update(self):
@@ -106,10 +108,27 @@ class Player(GameObject):
         else:
             self.frameWait = self.frameWaitMax
             
-        for tile in self.playerTiles:
-            tile.x += tile.xv*self.stepW
-            tile.y += tile.yv*self.stepH
-    
+            
+        lastX = self.playerTiles[0].x
+        lastY = self.playerTiles[0].y
+        self.playerTiles[0].x += self.playerTiles[0].xv*self.stepW
+        self.playerTiles[0].y += self.playerTiles[0].yv*self.stepH
+        storeX = lastX
+        storeY = lastY
+        
+        for x in range(1,len(self.playerTiles)):
+            storeX = self.playerTiles[x].x
+            storeY = self.playerTiles[x].y 
+            self.playerTiles[x].x = lastX
+            self.playerTiles[x].y = lastY
+            lastX = storeX
+            lastY = storeY
+
+            
+        if self.addNew:
+            self.playerTiles.append(PlayerSquare(storeX, storeY))
+            self.addNew = False
+            
     def draw(self):
         for tiles in self.playerTiles:
             tiles.draw()
