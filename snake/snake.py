@@ -54,23 +54,7 @@ class PlayerSquare(GameObject):
         super().__init__(x,y)
         self.color = WHITE
         
-class Tiles(GameObject):
-    
-    def __init__(self):
-        super().__init__(0,0)
-        self.tiles = []
-        for x in range(self.numSquarePerRow):
-            self.tiles.append([])
-            for y in range(self.numSquarePerRow):
-                self.tiles[x].append(Square(self.w*x, self.h*y))
-
-
-    def draw(self):
-        for row in self.tiles:
-            for tile in row:
-                tile.draw()
-
-
+        
 class Player(GameObject):
     
     def __init__(self):
@@ -151,7 +135,6 @@ class Player(GameObject):
 class Game:
     
     def __init__(self):
-        self.tiles = Tiles()
         self.player = Player()
                
     def handleCollisions(self):
@@ -163,10 +146,8 @@ class Game:
     def update(self):
         self.handleCollisions()
         self.player.update()
-        self.tiles.update()
         
     def draw(self):
-        self.tiles.draw()
         self.player.draw()
 
 game = Game()
