@@ -87,6 +87,16 @@ class Player(GameObject):
             
     
     
+    def checkGameOver(self):
+        return self.checkSelfIntersect() or self.checkOutsideBounds()
+    
+    def checkOutsideBounds(self):
+        if not -10 < self.playerTiles[0].x < width-10:
+            return True
+        elif not -10 < self.playerTiles[0].y < height-10:
+            return True
+        
+        return False
     
     def checkSelfIntersect(self):
         for tile1 in self.playerTiles:
@@ -96,7 +106,9 @@ class Player(GameObject):
                 tile1Rect = pygame.Rect(tile1.x, tile1.y, tile1.w, tile1.h)
                 tile2Rect = pygame.Rect(tile2.x+2, tile2.y+2, tile2.w-4, tile2.h-4)
                 if tile1Rect.colliderect(tile2Rect):
-                    print("collide self")
+                    return True
+                
+        return False
     
     
     def update(self):
@@ -138,7 +150,8 @@ class Game:
         self.player = Player()
                
     def handleCollisions(self):
-        self.player.checkSelfIntersect()
+        if self.player.checkGameOver():
+            self.player = Player()
     
     def buttonEvent(self, direction, pressed):
         self.player.handleButtonPress(direction)
