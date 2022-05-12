@@ -5,3 +5,8 @@
 [Pong](https://github.com/hippyclipper/games_simple/blob/main/pong/pong.py)
 
 ![pong](img/pong.png)
+
+[breakout](https://github.com/hippyclipper/games_simple/blob/main/breakout/breakout.py)
+
+![breakout](img/breakoutPic.png)
+
