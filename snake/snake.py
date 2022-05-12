@@ -46,12 +46,13 @@ class Square(GameObject):
     
     def __init__(self,x,y):
         super().__init__(x,y)
+        self.color = BACKGROUND
 
 class PlayerSquare(GameObject):
     
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.color = RED
+        self.color = WHITE
         
 class Tiles(GameObject):
     
@@ -62,6 +63,7 @@ class Tiles(GameObject):
             self.tiles.append([])
             for y in range(self.numSquarePerRow):
                 self.tiles[x].append(Square(self.w*x, self.h*y))
+
 
     def draw(self):
         for row in self.tiles:
@@ -77,7 +79,7 @@ class Player(GameObject):
         self.y = (self.numSquarePerRow//2)*self.h
         self.stepW = self.w
         self.stepH = self.h
-        self.frameWaitMax = 10
+        self.frameWaitMax = 6
         self.frameWait = self.frameWaitMax
         self.playerTiles = [PlayerSquare(self.x, self.y)]
         self.addNew = False
@@ -99,6 +101,19 @@ class Player(GameObject):
         elif direction == "space":
             self.addNew = True
             
+    
+    
+    
+    def checkSelfIntersect(self):
+        for tile1 in self.playerTiles:
+            for tile2 in self.playerTiles:
+                if tile1 == tile2:
+                    continue
+                tile1Rect = pygame.Rect(tile1.x, tile1.y, tile1.w, tile1.h)
+                tile2Rect = pygame.Rect(tile2.x+2, tile2.y+2, tile2.w-4, tile2.h-4)
+                if tile1Rect.colliderect(tile2Rect):
+                    print("collide self")
+    
     
     def update(self):
         
@@ -140,12 +155,13 @@ class Game:
         self.player = Player()
                
     def handleCollisions(self):
-        pass
+        self.player.checkSelfIntersect()
     
     def buttonEvent(self, direction, pressed):
         self.player.handleButtonPress(direction)
         
     def update(self):
+        self.handleCollisions()
         self.player.update()
         self.tiles.update()
         
