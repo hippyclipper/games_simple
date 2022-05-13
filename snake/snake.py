@@ -70,6 +70,8 @@ class FoodSquare(GameObject):
             self.possibleY.append(j)
             i += self.w
             j += self.h
+            
+
     
     
     def relocate(self, player):
@@ -82,9 +84,9 @@ class FoodSquare(GameObject):
 
         possibleX = set(self.possibleX).difference(set(playerX))
         possibleY = set(self.possibleY).difference(set(playerY))
-        
-        self.x = random.sample(self.possibleX,1)[0]
-        self.y = random.sample(self.possibleY,1)[0]
+
+        self.x = random.sample(possibleX,1)[0]
+        self.y = random.sample(possibleY,1)[0]
             
         
     def checkPlayerCollison(self, player):
@@ -192,6 +194,7 @@ class Game:
     def __init__(self):
         self.player = Player()
         self.foodSquare = FoodSquare()
+        self.foodSquare.relocate(self.player)
                
     def handleCollisions(self):
         if self.player.checkGameOver():
