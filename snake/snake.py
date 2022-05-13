@@ -110,17 +110,17 @@ class Player(GameObject):
         self.addNew = False
         
     def handleButtonPress(self, direction):
-        
-        if direction == "up":
+        tileNum = len(self.playerTiles)
+        if direction == "up" and (self.playerTiles[0].yv != 1  or tileNum == 1):
             self.playerTiles[0].yv = -1
             self.playerTiles[0].xv = 0
-        elif direction == "down":
+        elif direction == "down" and (self.playerTiles[0].yv != -1  or tileNum == 1):
             self.playerTiles[0].yv = 1
             self.playerTiles[0].xv = 0
-        elif direction == "left":
+        elif direction == "left" and (self.playerTiles[0].xv != 1 or tileNum == 1):
             self.playerTiles[0].yv = 0
             self.playerTiles[0].xv = -1
-        elif direction == "right":
+        elif direction == "right" and (self.playerTiles[0].xv != -1 or tileNum == 1):
             self.playerTiles[0].yv = 0
             self.playerTiles[0].xv = 1
         elif direction == "space":
