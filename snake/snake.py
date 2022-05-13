@@ -2,6 +2,8 @@ import pygame
 import random
 import math
 
+#==========================================================================================================================
+
 screenScale = 8
 width = int(100 * screenScale)
 height = width
@@ -17,6 +19,8 @@ BACKGROUND = (5, 5, 5)
 WHITE = (255,255,255)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
+
+#==========================================================================================================================
 
 class GameObject:
     
@@ -41,12 +45,7 @@ class GameObject:
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
 
-
-class Square(GameObject):
-    
-    def __init__(self,x,y):
-        super().__init__(x,y)
-        self.color = BACKGROUND
+#==========================================================================================================================
 
 class PlayerSquare(GameObject):
     
@@ -54,7 +53,22 @@ class PlayerSquare(GameObject):
         super().__init__(x,y)
         self.color = WHITE
         
+#==========================================================================================================================
+
+class FoodSquare(GameObject):
+    
+    def __init__(self):
+        super().__init__(0,0)
+        self.color = BLUE
         
+    def checkPlayerCollison(self, player):
+        foodRect = pygame.Rect(self.x, self.y, self.w, self.h)
+        playerRect = pygame.Rect(player.playerTiles[0].x, player.playerTiles[0].y, player.playerTiles[0].w, player.playerTiles[0].h)
+        if foodRect.colliderect(playerRect):
+            player.grow()
+
+#==========================================================================================================================
+
 class Player(GameObject):
     
     def __init__(self):
@@ -85,7 +99,8 @@ class Player(GameObject):
         elif direction == "space":
             self.addNew = True
             
-    
+    def grow(self):
+        self.addNew = True
     
     def checkGameOver(self):
         return self.checkSelfIntersect() or self.checkOutsideBounds()
@@ -109,8 +124,7 @@ class Player(GameObject):
                     return True
                 
         return False
-    
-    
+        
     def update(self):
         
         if self.frameWait > 0:
@@ -143,25 +157,34 @@ class Player(GameObject):
     def draw(self):
         for tiles in self.playerTiles:
             tiles.draw()
-    
+ 
+#========================================================================================================================== 
+ 
 class Game:
     
     def __init__(self):
         self.player = Player()
+        self.foodSquare = FoodSquare()
                
     def handleCollisions(self):
         if self.player.checkGameOver():
             self.player = Player()
+            
+        self.foodSquare.checkPlayerCollison(self.player)
     
     def buttonEvent(self, direction, pressed):
         self.player.handleButtonPress(direction)
         
     def update(self):
         self.handleCollisions()
+        self.foodSquare.update()
         self.player.update()
         
     def draw(self):
+        self.foodSquare.draw()
         self.player.draw()
+
+#==========================================================================================================================
 
 game = Game()
 
@@ -202,6 +225,6 @@ while not done:
     clock.tick(60)
     screen.fill(BACKGROUND)
     
-#=============================================================
+#==========================================================================================================================
 pygame.display.quit()
 pygame.quit()    
