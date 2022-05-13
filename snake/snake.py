@@ -52,6 +52,7 @@ class PlayerSquare(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = WHITE
+ 
         
 #==========================================================================================================================
 
@@ -60,12 +61,38 @@ class FoodSquare(GameObject):
     def __init__(self):
         super().__init__(0,0)
         self.color = BLUE
+        self.possibleX = []
+        self.possibleY = []
+        i = 0
+        j = 0
+        for x in range(self.numSquarePerRow):
+            self.possibleX.append(i)
+            self.possibleY.append(j)
+            i += self.w
+            j += self.h
+    
+    
+    def relocate(self, player):
+        playerX = []
+        playerY = []
+        for tile in player.playerTiles:
+            playerX.append(tile.x)
+            playerY.append(tile.y)
+        
+
+        possibleX = set(self.possibleX).difference(set(playerX))
+        possibleY = set(self.possibleY).difference(set(playerY))
+        
+        self.x = random.sample(self.possibleX,1)[0]
+        self.y = random.sample(self.possibleY,1)[0]
+            
         
     def checkPlayerCollison(self, player):
         foodRect = pygame.Rect(self.x, self.y, self.w, self.h)
         playerRect = pygame.Rect(player.playerTiles[0].x, player.playerTiles[0].y, player.playerTiles[0].w, player.playerTiles[0].h)
         if foodRect.colliderect(playerRect):
             player.grow()
+            self.relocate(player)
 
 #==========================================================================================================================
 
