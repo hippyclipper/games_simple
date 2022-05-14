@@ -4,7 +4,7 @@ import math
 #==========================================================================================================================
 screenScale = 8
 width = int(100 * screenScale)
-height = width//1.25
+height = width
 pygame.init()
 pygame.mixer.init()
 pygame.font.init()
@@ -79,20 +79,31 @@ class PlayerBalls(BallList):
 class PaddleBalls(BallList):
     def __init__(self):
         super().__init__()
-        self.topCol = 2
+        self.topCol = 3
         self.rows = 10
-        self.offset = (height//self.rows) * .8
+        self.offsetH = (height//self.rows) * .8
+        self.offsetW = (width//self.rows) * .8
         for y in range(self.rows):
             for x in range(self.topCol+y):
-                newX = x*self.offset+((self.rows-(y/2))*self.offset)
-                newY = y*self.offset
+                newX = x*self.offsetW+((self.rows-(y/2))*self.offsetW)
+                newY = y*self.offsetH
                 self.balls.append(PaddleBall(newX, newY))
+                
+        xoff = self.balls[-1].x - width
+        #self.balls[-self.topCol-self.rows+1].color = RED
+        yoff = (height - self.balls[-1].y) * .50
+        for ball in self.balls:
+            ball.x -= xoff
+            ball.y += yoff
+        xoff = self.balls[-self.topCol-self.rows+1].x//2
+        for ball in self.balls:
+            ball.x -= xoff
+
         
 #==========================================================================================================================
 class Game:
     
     def __init__(self):
-        #self.testObj = GameObject(width//2, height//2)
         self.paddleBalls = PlayerBalls()
         self.playerBalls = PaddleBalls()
         
