@@ -17,6 +17,8 @@ WHITE = (250, 250, 250)
 BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
+LEFT_MOUSE = 1
+RIGHT_MOUSE = 3
 #==========================================================================================================================
 class GameObject:
     
@@ -62,7 +64,7 @@ class BallList(GameObject):
     
     def __init__(self):
         super().__init__(0,0)
-        self.balls = []
+        self.balls = []   
              
     def update(self):
         for ball in self.balls:
@@ -75,8 +77,12 @@ class BallList(GameObject):
 class PlayerBalls(BallList):
     def __init__(self):
         super().__init__()
+        
+    def spawnBall(self, x, y):
+        self.balls.append(PlayerBall(x,y))
 #==========================================================================================================================        
 class PaddleBalls(BallList):
+    
     def __init__(self):
         super().__init__()
         self.topCol = 3
@@ -110,6 +116,9 @@ class Game:
         
     def buttonEvent(self, direction, pressed):
         pass
+    
+    def mouseEvent(self, button, pressed, x, y):
+        pass
         
     def handleCollisons(self):
         pass
@@ -125,6 +134,8 @@ class Game:
 game = Game()
 
 while not done:
+    
+    x, y = pygame.mouse.get_pos()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -152,7 +163,13 @@ while not done:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
             game.buttonEvent("down", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-            pass   
+            pass
+        
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button ==  RIGHT_MOUSE:           
+            pass
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT_MOUSE:
+            pass
                    
     game.draw()
     game.update()
