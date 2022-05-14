@@ -25,7 +25,7 @@ class GameObject:
     def __init__(self,x,y):
         self.x = x
         self.y = y
-        self.g = 5
+        self.g = 2
         self.bounce = 1
         self.xv = 0 
         self.yv = 0
@@ -53,6 +53,11 @@ class PlayerBall(Ball):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = RED
+        
+    def update(self):
+        self.yv += self.g
+        self.x += self.xv
+        self.y += self.yv
 #==========================================================================================================================        
 class PaddleBall(Ball):
     
@@ -110,15 +115,15 @@ class PaddleBalls(BallList):
 class Game:
     
     def __init__(self):
-        self.paddleBalls = PlayerBalls()
-        self.playerBalls = PaddleBalls()
+        self.paddleBalls = PaddleBalls()
+        self.playerBalls = PlayerBalls()
         
         
     def buttonEvent(self, direction, pressed):
         pass
     
     def mouseEvent(self, button, pressed, x, y):
-        pass
+        self.playerBalls.spawnBall(x, y)
         
     def handleCollisons(self):
         pass
@@ -169,7 +174,7 @@ while not done:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button ==  RIGHT_MOUSE:           
             pass
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == LEFT_MOUSE:
-            pass
+            game.mouseEvent("left_mouse", True, x, y)
                    
     game.draw()
     game.update()
