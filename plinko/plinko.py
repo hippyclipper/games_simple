@@ -83,8 +83,9 @@ class PlayerBalls(BallList):
     def __init__(self):
         super().__init__()
         
-    def spawnBall(self, x, y):
-        self.balls.append(PlayerBall(x,y))
+    def spawnBall(self, x, y, paddleBalls):
+        if x > paddleBalls.balls[0].x and x < paddleBalls.balls[paddleBalls.topCol-1].x and paddleBalls.balls[0].y > y:
+            self.balls.append(PlayerBall(x,y))
 #==========================================================================================================================        
 class PaddleBalls(BallList):
     
@@ -123,7 +124,7 @@ class Game:
         pass
     
     def mouseEvent(self, button, pressed, x, y):
-        self.playerBalls.spawnBall(x, y)
+        self.playerBalls.spawnBall(x, y, self.paddleBalls)
         
     def handleCollisons(self):
         pass
