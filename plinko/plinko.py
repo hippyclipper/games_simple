@@ -25,11 +25,11 @@ class GameObject:
     def __init__(self,x,y):
         self.x = x
         self.y = y
-        self.g = 2
+        self.g = 1
         self.bounce = 1
         self.xv = 0 
         self.yv = 0
-        self.r = 10
+        self.r = 12
         self.color = WHITE
         
     def update(self):
@@ -113,11 +113,37 @@ class PaddleBalls(BallList):
 
         
 #==========================================================================================================================
+class CollisonHandler:
+    
+    
+    def circleCircle(self, ball1, ball2):
+        x1 = ball1.x
+        y1 = ball1.y
+        x2 = ball2.x
+        y2 = ball2.y
+        
+        dist = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+        
+        collides = dist < ball1.r + ball2.r
+        
+        if collides:
+            print("collide")
+        
+        return collides
+    
+    
+    def handleBallLists(self, paddleBalls, playerBalls):
+        for paddleBall in paddleBalls.balls:
+            for playerBall in playerBalls.balls:
+                self.circleCircle(playerBall, paddleBall)
+        
+#==========================================================================================================================            
 class Game:
     
     def __init__(self):
         self.paddleBalls = PaddleBalls()
         self.playerBalls = PlayerBalls()
+        self.collisonHandler = CollisonHandler()
         
         
     def buttonEvent(self, direction, pressed):
@@ -127,9 +153,10 @@ class Game:
         self.playerBalls.spawnBall(x, y, self.paddleBalls)
         
     def handleCollisons(self):
-        pass
+        self.collisonHandler.handleBallLists(self.paddleBalls, self.playerBalls)
         
     def update(self):
+        self.handleCollisons()
         self.paddleBalls.update()
         self.playerBalls.update()
     
