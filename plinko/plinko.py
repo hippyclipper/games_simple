@@ -79,8 +79,8 @@ class PlayerBall(Ball):
         self.xv = newV[0] * speed * self.friction
         self.yv = newV[1] * speed * self.friction
         
-        self.x += newV[0] + (sign(newV[0]) * (self.r + paddle.r)//2)
-        self.y += newV[1] + (sign(newV[1]) * (self.r + paddle.r)//2)
+        self.x += newV[0] * (self.r + paddle.r)//2
+        self.y += newV[1] * (self.r + paddle.r)//2
 
               
 #==========================================================================================================================        
