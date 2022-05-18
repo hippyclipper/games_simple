@@ -19,17 +19,23 @@ COLORLIST = [RED, GREEN, BLUE]
 done = False
 LEFT_MOUSE = 1
 RIGHT_MOUSE = 3
+
+def sign(num):
+    if num < 0:
+        return -1
+    return 1
+
 #==========================================================================================================================
 class GameObject:
     
     def __init__(self,x,y):
         self.x = x
         self.y = y
-        self.g = 1
+        self.g = .5
         self.bounce = 1
         self.xv = 0 
         self.yv = 0
-        self.r = 12
+        self.r = 7
         self.color = WHITE
         
     def update(self):
@@ -53,17 +59,38 @@ class PlayerBall(Ball):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = RED
+        self.friction = .5
         
     def update(self):
         self.yv += self.g
         self.x += self.xv
         self.y += self.yv
+        
+    def reflectOffPaddle(self, paddle):
+        x1 = self.x
+        y1 = self.y
+        x2 = paddle.x
+        y2 = paddle.y
+        speed = math.sqrt((x1-x1+self.xv)**2 + (y1-y1+self.yv)**2)
+        newXv = x1 - x2
+        newYv = y1 - y2
+        newV = pygame.math.Vector2([newXv,newYv]).normalize()
+        
+        self.xv = newV[0] * speed * self.friction
+        self.yv = newV[1] * speed * self.friction
+        
+        self.x += newV[0] + (sign(newV[0]) * (self.r + paddle.r)//2)
+        self.y += newV[1] + (sign(newV[1]) * (self.r + paddle.r)//2)
+
+              
 #==========================================================================================================================        
 class PaddleBall(Ball):
     
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = BLUE
+        self.r = 12
+
 #==========================================================================================================================
 class BallList(GameObject):
     
@@ -102,12 +129,14 @@ class PaddleBalls(BallList):
                 self.balls.append(PaddleBall(newX, newY))
                 
         xoff = self.balls[-1].x - width
-        #self.balls[-self.topCol-self.rows+1].color = RED
         yoff = (height - self.balls[-1].y) * .50
+        
         for ball in self.balls:
             ball.x -= xoff
             ball.y += yoff
+            
         xoff = self.balls[-self.topCol-self.rows+1].x//2
+        
         for ball in self.balls:
             ball.x -= xoff
 
@@ -116,18 +145,18 @@ class PaddleBalls(BallList):
 class CollisonHandler:
     
     
-    def circleCircle(self, ball1, ball2):
-        x1 = ball1.x
-        y1 = ball1.y
-        x2 = ball2.x
-        y2 = ball2.y
+    def circleCircle(self, playerBall, paddleBall):
+        x1 = playerBall.x
+        y1 = playerBall.y
+        x2 = paddleBall.x
+        y2 = paddleBall.y
         
         dist = math.sqrt((x1-x2)**2 + (y1-y2)**2)
         
-        collides = dist < ball1.r + ball2.r
+        collides = dist < playerBall.r + paddleBall.r
         
         if collides:
-            print("collide")
+            playerBall.reflectOffPaddle(paddleBall)
         
         return collides
     
