@@ -76,8 +76,13 @@ class PlayerBall(Ball):
         newYv = y1 - y2
         newV = pygame.math.Vector2([newXv,newYv]).normalize()
         
+        if newV[0] == 0:
+            newV[0] = .001
+        
         self.xv = newV[0] * speed * self.friction
         self.yv = newV[1] * speed * self.friction
+        
+        
         
         self.x += newV[0] * (self.r + paddle.r)//2
         self.y += newV[1] * (self.r + paddle.r)//2
@@ -89,8 +94,23 @@ class PaddleBall(Ball):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = BLUE
+        self.outerColor = WHITE
         self.r = 12
-
+        self.outerDraw = -1
+        self.outerR = [1,5,7,7,5,1]
+        
+    def hit(self):
+        self.outerDraw = len(self.outerR)
+        
+    def update(self):
+        if self.outerDraw >= 0:
+            self.outerDraw -= 1
+        
+    def draw(self):
+        
+        if self.outerDraw >= 0:
+            pygame.draw.circle(screen, self.outerColor, (self.x, self.y), self.r + self.outerR[self.outerDraw])
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 #==========================================================================================================================
 class BallList(GameObject):
     
@@ -156,6 +176,7 @@ class CollisonHandler:
         collides = dist < playerBall.r + paddleBall.r
         
         if collides:
+            paddleBall.hit()
             playerBall.reflectOffPaddle(paddleBall)
         
         return collides
