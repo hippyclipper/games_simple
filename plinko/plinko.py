@@ -170,6 +170,16 @@ class BottomSquare(GameObject):
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
         
+class AwardSquare(GameObject):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.w = self.r
+        self.h = self.r*10
+        self.color = RED
+        
+    def draw(self):
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))        
+        
 class BottomSquares(BottomSquare):
     
     def __init__(self, paddleBalls):
@@ -177,7 +187,7 @@ class BottomSquares(BottomSquare):
         self.squares = []
         
         for i in range(paddleBalls.topCol+paddleBalls.rows-1):
-            self.squares.append(BottomSquare(paddleBalls.balls[-1-i].x-(self.w//2),height-self.h))
+            self.squares.append(BottomSquare(paddleBalls.balls[-1-i].x-(self.r/2),height-self.h))
         
     def update(self):
         for square in self.squares:
@@ -186,7 +196,28 @@ class BottomSquares(BottomSquare):
     def draw(self):
         for square in self.squares:
             square.draw()
+            
+class AwardSquares(AwardSquare):
+    
+    def __init__(self, paddleBalls):
+        super().__init__(0,0)
+        self.squares = []
+        self.color = RED
         
+        for i in range(1,paddleBalls.topCol+paddleBalls.rows-1):
+            self.squares.append(AwardSquare(paddleBalls.balls[-1-i].x + self.w/2,height-self.h))
+            self.squares[-1].h -= 10
+            self.squares[-1].color = COLORLIST[random.randint(0,2)]
+            self.squares[-1].y += 10
+            self.squares[-1].w = paddleBalls.offsetW - self.squares[-1].w
+            
+    def update(self):
+        for square in self.squares:
+            square.update()
+            
+    def draw(self):
+        for square in self.squares:
+            square.draw()        
 #==========================================================================================================================
 class CollisonHandler:
     
@@ -220,6 +251,7 @@ class Game:
         self.paddleBalls = PaddleBalls()
         self.playerBalls = PlayerBalls()
         self.bottomSquares = BottomSquares(self.paddleBalls)
+        self.awardSquares = AwardSquares(self.paddleBalls)
         self.collisonHandler = CollisonHandler()
         
         
@@ -238,11 +270,13 @@ class Game:
         self.paddleBalls.update()
         self.playerBalls.update()
         self.bottomSquares.update()
+        self.awardSquares.update()
     
     def draw(self):
         self.paddleBalls.draw()
         self.playerBalls.draw()
         self.bottomSquares.draw()
+        self.awardSquares.draw()
 #==========================================================================================================================        
 game = Game()
 
