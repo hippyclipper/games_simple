@@ -97,7 +97,7 @@ class PaddleBall(Ball):
         self.outerColor = WHITE
         self.r = 12
         self.outerDraw = -1
-        self.outerR = [1,5,7,7,5,1]
+        self.outerR = [2,2,5,5,7,7,7,5,5,2,2]
         
     def hit(self):
         self.outerDraw = len(self.outerR)
