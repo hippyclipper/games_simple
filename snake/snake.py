@@ -61,32 +61,36 @@ class FoodSquare(GameObject):
     def __init__(self):
         super().__init__(0,0)
         self.color = BLUE
-        self.possibleX = []
-        self.possibleY = []
+
+        self.possible = []
         i = 0
         j = 0
         for x in range(self.numSquarePerRow):
-            self.possibleX.append(i)
-            self.possibleY.append(j)
-            i += self.w
+            i = 0
+            for y in range(self.numSquarePerRow):
+
+                self.possible.append([i,j])
+                i += self.w
             j += self.h
-            
+                
 
     
     
     def relocate(self, player):
-        playerX = []
-        playerY = []
+
+        playerLoc = []
         for tile in player.playerTiles:
-            playerX.append(tile.x)
-            playerY.append(tile.y)
+
+            playerLoc.append([tile.x,tile.y])
         
 
-        possibleX = set(self.possibleX).difference(set(playerX))
-        possibleY = set(self.possibleY).difference(set(playerY))
 
-        self.x = random.sample(possibleX,1)[0]
-        self.y = random.sample(possibleY,1)[0]
+        possible =  [x for x in self.possible if x not in playerLoc]
+        choosen = possible[random.randint(0,len(possible)-1)]
+        
+        self.x = choosen[0]
+        self.y = choosen[1]
+        
             
         
     def checkPlayerCollison(self, player):
