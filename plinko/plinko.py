@@ -160,6 +160,32 @@ class PaddleBalls(BallList):
         for ball in self.balls:
             ball.x -= xoff
 
+
+class BottomSquare(GameObject):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        self.w = self.r
+        self.h = self.r*10
+        
+    def draw(self):
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+        
+class BottomSquares(BottomSquare):
+    
+    def __init__(self, paddleBalls):
+        super().__init__(0,0)
+        self.squares = []
+        
+        for i in range(paddleBalls.topCol+paddleBalls.rows-1):
+            self.squares.append(BottomSquare(paddleBalls.balls[-1-i].x-(self.w//2),height-self.h))
+        
+    def update(self):
+        for square in self.squares:
+            square.update()
+            
+    def draw(self):
+        for square in self.squares:
+            square.draw()
         
 #==========================================================================================================================
 class CollisonHandler:
@@ -193,7 +219,9 @@ class Game:
     def __init__(self):
         self.paddleBalls = PaddleBalls()
         self.playerBalls = PlayerBalls()
+        self.bottomSquares = BottomSquares(self.paddleBalls)
         self.collisonHandler = CollisonHandler()
+        
         
         
     def buttonEvent(self, direction, pressed):
@@ -209,10 +237,12 @@ class Game:
         self.handleCollisons()
         self.paddleBalls.update()
         self.playerBalls.update()
+        self.bottomSquares.update()
     
     def draw(self):
         self.paddleBalls.draw()
         self.playerBalls.draw()
+        self.bottomSquares.draw()
 #==========================================================================================================================        
 game = Game()
 
