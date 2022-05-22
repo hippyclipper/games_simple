@@ -106,7 +106,7 @@ class PaddleBall(Ball):
         super().__init__(x,y)
         self.color = BLUE
         self.outerColor = WHITE
-        self.r = 12
+        self.r = 10
         self.outerDraw = -1
         self.outerR = [2,2,5,5,7,7,7,5,5,2,2]
         
@@ -256,12 +256,18 @@ class CollisonHandler:
                 self.circleCircle(playerBall, paddleBall)
     
     def refelectBallAndSquare(self, bottomSquare, playerBall):
-        pass
+        bottomSquareRect = pygame.Rect(bottomSquare.x+bottomSquare.xv, bottomSquare.y+bottomSquare.yv, bottomSquare.w, bottomSquare.h)
+        playerBall = pygame.Rect(playerBall.x-playerBall.r, playerBall.y-playerBall.r, playerBall.r*2, playerBall.r*2)
+        
+        if not bottomSquareRect.colliderect(playerBall):
+            return
+        
+        print("contact")
                 
     def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
         for playerBall in playerBalls.balls:
             for bottomSquare in bottomSquares.squares:
-                self.refelectBallAndSquare(playerBall, bottomSquare)
+                self.refelectBallAndSquare(bottomSquare, playerBall)
                 
         
 #==========================================================================================================================            
