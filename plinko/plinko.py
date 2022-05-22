@@ -20,6 +20,17 @@ done = False
 LEFT_MOUSE = 1
 RIGHT_MOUSE = 3
 
+
+# TODO
+# add coloring to squares
+# change color scheme
+# add score multipler text
+# score
+# detect collison of award squares
+
+# detection of collison with squares
+# refelection using breakout method
+
 def sign(num):
     if num < 0:
         return -1
@@ -160,7 +171,7 @@ class PaddleBalls(BallList):
         for ball in self.balls:
             ball.x -= xoff
 
-
+#==========================================================================================================================
 class BottomSquare(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
@@ -169,7 +180,7 @@ class BottomSquare(GameObject):
         
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
-        
+#==========================================================================================================================        
 class AwardSquare(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
@@ -179,7 +190,7 @@ class AwardSquare(GameObject):
         
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))        
-        
+#==========================================================================================================================        
 class BottomSquares(BottomSquare):
     
     def __init__(self, paddleBalls):
@@ -196,7 +207,7 @@ class BottomSquares(BottomSquare):
     def draw(self):
         for square in self.squares:
             square.draw()
-            
+#==========================================================================================================================            
 class AwardSquares(AwardSquare):
     
     def __init__(self, paddleBalls):
@@ -243,6 +254,15 @@ class CollisonHandler:
         for paddleBall in paddleBalls.balls:
             for playerBall in playerBalls.balls:
                 self.circleCircle(playerBall, paddleBall)
+    
+    def refelectBallAndSquare(self, bottomSquare, playerBall):
+        pass
+                
+    def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
+        for playerBall in playerBalls.balls:
+            for bottomSquare in bottomSquares.squares:
+                self.refelectBallAndSquare(playerBall, bottomSquare)
+                
         
 #==========================================================================================================================            
 class Game:
@@ -253,9 +273,7 @@ class Game:
         self.bottomSquares = BottomSquares(self.paddleBalls)
         self.awardSquares = AwardSquares(self.paddleBalls)
         self.collisonHandler = CollisonHandler()
-        
-        
-        
+              
     def buttonEvent(self, direction, pressed):
         pass
     
@@ -264,6 +282,7 @@ class Game:
         
     def handleCollisons(self):
         self.collisonHandler.handleBallLists(self.paddleBalls, self.playerBalls)
+        self.collisonHandler.handleBottomSquaresAndBall(self.bottomSquares, self.playerBalls)
         
     def update(self):
         self.handleCollisons()
@@ -274,9 +293,10 @@ class Game:
     
     def draw(self):
         self.paddleBalls.draw()
+        self.awardSquares.draw()
         self.playerBalls.draw()
         self.bottomSquares.draw()
-        self.awardSquares.draw()
+
 #==========================================================================================================================        
 game = Game()
 
