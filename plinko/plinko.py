@@ -290,10 +290,12 @@ class CollisonHandler:
             normal = [0,-1]
             
             
-        print(collidesX, collidesY)
+        
         speed = math.sqrt( (playerBall.x-(playerBall.xv+playerBall.x))**2 + (playerBall.y-(playerBall.yv+playerBall.y))**2)
         playerBall.xv, playerBall.yv = pygame.math.Vector2([playerBall.xv,playerBall.yv]).normalize().reflect(pygame.math.Vector2(normal)) * speed
-        #print("contact")
+        if abs(playerBall.xv) < .01:
+            playerBall.xv += sign(playerBall.xv) * 1
+        
                 
     def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
         for playerBall in playerBalls.balls:
