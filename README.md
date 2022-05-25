@@ -10,3 +10,7 @@
 
 ![breakout](img/breakoutPic.png)
 
+[snake](https://github.com/hippyclipper/games_simple/blob/main/snake/snake.py)
+
+![snake](img/snake.png)
+
