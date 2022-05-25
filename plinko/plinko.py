@@ -257,12 +257,43 @@ class CollisonHandler:
     
     def refelectBallAndSquare(self, bottomSquare, playerBall):
         bottomSquareRect = pygame.Rect(bottomSquare.x+bottomSquare.xv, bottomSquare.y+bottomSquare.yv, bottomSquare.w, bottomSquare.h)
-        playerBall = pygame.Rect(playerBall.x-playerBall.r, playerBall.y-playerBall.r, playerBall.r*2, playerBall.r*2)
+        playerBallRect = pygame.Rect(playerBall.x-playerBall.r, playerBall.y-playerBall.r, playerBall.r*2, playerBall.r*2)
+        collidesX = False
+        collidesY = False
         
-        if not bottomSquareRect.colliderect(playerBall):
+        normal = [0,1]
+        
+        if not bottomSquareRect.colliderect(playerBallRect):
             return
         
-        print("contact")
+        playerBallRect.x -= playerBall.xv
+        
+        if not bottomSquareRect.colliderect(playerBallRect):
+            collidesX = True
+        
+        playerBallRect.x += playerBall.xv
+        playerBallRect.y -= playerBall.yv
+        
+        if not bottomSquareRect.colliderect(playerBallRect):
+            collidesY = True
+            
+        if not collidesY and not collidesX:
+            collidesY = True
+            collidesX = True
+            
+        if collidesX and playerBall.xv > 0:
+            normal = [-1,0]
+        elif collidesX and playerBall.xv <= 0:
+            normal = [1,0]
+        
+        if collidesY and playerBall.yv > 0:
+            normal = [0,-1]
+            
+            
+        print(collidesX, collidesY)
+        speed = math.sqrt( (playerBall.x-(playerBall.xv+playerBall.x))**2 + (playerBall.y-(playerBall.yv+playerBall.y))**2)
+        playerBall.xv, playerBall.yv = pygame.math.Vector2([playerBall.xv,playerBall.yv]).normalize().reflect(pygame.math.Vector2(normal)) * speed
+        #print("contact")
                 
     def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
         for playerBall in playerBalls.balls:
