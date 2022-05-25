@@ -207,13 +207,21 @@ class BottomSquares(BottomSquare):
     def draw(self):
         for square in self.squares:
             square.draw()
-#==========================================================================================================================            
+#==========================================================================================================================
+# (255, 139, 1)
+# (250, 111, 1)
+# (245, 83, 1)
+# (240, 56, 1)
+# (235, 28, 1)
+# (230, 0, 1)          
 class AwardSquares(AwardSquare):
     
     def __init__(self, paddleBalls):
         super().__init__(0,0)
         self.squares = []
         self.color = RED
+        self.colors = [(255, 139, 1),(250, 111, 1),(245, 83, 1),(240, 56, 1),(235, 28, 1),(230, 0, 1)][::-1]
+
         
         for i in range(1,paddleBalls.topCol+paddleBalls.rows-1):
             self.squares.append(AwardSquare(paddleBalls.balls[-1-i].x + self.w/2,height-self.h))
@@ -221,7 +229,16 @@ class AwardSquares(AwardSquare):
             self.squares[-1].color = COLORLIST[random.randint(0,2)]
             self.squares[-1].y += 10
             self.squares[-1].w = paddleBalls.offsetW - self.squares[-1].w
+        i = 0
+        step = (len(self.colors)/(len(self.squares)))
+        for x in range(0,len(self.squares)):
+            self.squares[x].color = self.colors[int(i)]
+            self.squares[-1-x].color = self.colors[int(i)]
+            i += step
+            print(int(i))
+
             
+                    
     def update(self):
         for square in self.squares:
             square.update()
