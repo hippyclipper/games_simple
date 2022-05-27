@@ -20,6 +20,10 @@ done = False
 LEFT_MOUSE = 1
 RIGHT_MOUSE = 3
 
+# self.font = pygame.font.SysFont('arial', 30)
+# self.textScore = self.font.render(str(self.score),True,self.color)
+# self.title = self.font.render("ASTROIDS",True,self.color)
+# screen.blit(self.title, [self.titleLoc[0], self.titleLoc[1]-50])
 
 # TODO
 # add coloring to squares
@@ -245,7 +249,19 @@ class AwardSquares(AwardSquare):
             
     def draw(self):
         for square in self.squares:
-            square.draw()        
+            square.draw()
+#==========================================================================================================================            
+class Hud(GameObject):
+    def __init__(self):
+        
+        super().__init__(0,0)
+        self.font = pygame.font.SysFont('arial', 30)
+        self.score = 0
+        self.textScore = self.font.render(str(self.score),True,self.color)
+        self.textScoreLoc = self.textScore.get_rect(center = screen.get_rect().center)
+        
+    def draw(self):
+        screen.blit(self.textScore, [10, 10])            
 #==========================================================================================================================
 class CollisonHandler:
     
@@ -310,8 +326,8 @@ class CollisonHandler:
         
         speed = math.sqrt( (playerBall.x-(playerBall.xv+playerBall.x))**2 + (playerBall.y-(playerBall.yv+playerBall.y))**2)
         playerBall.xv, playerBall.yv = pygame.math.Vector2([playerBall.xv,playerBall.yv]).normalize().reflect(pygame.math.Vector2(normal)) * speed
-        if abs(playerBall.xv) < .01:
-            playerBall.xv += sign(playerBall.xv) * 1
+        if abs(playerBall.xv) < 1:
+            playerBall.xv += sign(playerBall.xv) * 2
         
                 
     def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
@@ -328,6 +344,7 @@ class Game:
         self.playerBalls = PlayerBalls()
         self.bottomSquares = BottomSquares(self.paddleBalls)
         self.awardSquares = AwardSquares(self.paddleBalls)
+        self.hud = Hud()
         self.collisonHandler = CollisonHandler()
               
     def buttonEvent(self, direction, pressed):
@@ -346,14 +363,17 @@ class Game:
         self.playerBalls.update()
         self.bottomSquares.update()
         self.awardSquares.update()
+        self.hud.update()
     
     def draw(self):
         self.paddleBalls.draw()
         self.awardSquares.draw()
         self.playerBalls.draw()
         self.bottomSquares.draw()
+        self.hud.draw()
 
-#==========================================================================================================================        
+#==========================================================================================================================
+        
 game = Game()
 
 while not done:
