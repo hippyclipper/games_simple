@@ -238,8 +238,8 @@ class AwardSquares(AwardSquare):
         super().__init__(0,0)
         self.squares = []
         self.color = RED
-        self.colors = [(255, 139, 1),(250, 111, 1),(245, 83, 1),(240, 56, 1),(235, 28, 1),(230, 0, 1)][::-1]
-        self.scores = [1000,100,50,10,5,1][::-1]
+        self.colors = ["#D62828","#F77F00","#FCBF49","#EAE2B7","#9a031e"][::-1]
+        self.scores = [1000,100,50,10,5][::-1]
 
         
         for i in range(1,paddleBalls.topCol+paddleBalls.rows-1):
@@ -248,10 +248,12 @@ class AwardSquares(AwardSquare):
             self.squares[-1].color = COLORLIST[random.randint(0,2)]
             self.squares[-1].y += 10
             self.squares[-1].w = paddleBalls.offsetW - self.squares[-1].w
+            
         i = 0
         a = 0
         step = (len(self.colors)/(len(self.squares)))
         stepa = (len(self.scores)/(len(self.squares)))
+        
         for x in range(0,len(self.squares)):
             self.squares[x].color = self.colors[int(i)]
             self.squares[-1-x].color = self.colors[int(i)]
