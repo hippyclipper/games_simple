@@ -15,6 +15,7 @@ BLUE = (0,0,255)
 GREEN = (0,255,0)
 WHITE = (250, 250, 250)
 BACKGROUND = (5, 5, 5)
+BLACK = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 LEFT_MOUSE = 1
@@ -191,9 +192,22 @@ class AwardSquare(GameObject):
         self.w = self.r
         self.h = self.r*10
         self.color = RED
+        self.fontColor = BLACK
+        self.scoreMultiplier = 0.0
+        self.font = pygame.font.SysFont('arial', 15)
+        self.textScore = self.font.render(str(self.scoreMultiplier),True,self.fontColor)
+        
+        
+    def setScore(self, score):
+        self.textScore = self.font.render(str(score),True,self.fontColor)
+    
         
     def draw(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))        
+        
+        rec = pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+        textRec = self.textScore.get_rect()
+        textRec.center = rec.center
+        screen.blit(self.textScore, textRec) 
 #==========================================================================================================================        
 class BottomSquares(BottomSquare):
     
@@ -225,6 +239,7 @@ class AwardSquares(AwardSquare):
         self.squares = []
         self.color = RED
         self.colors = [(255, 139, 1),(250, 111, 1),(245, 83, 1),(240, 56, 1),(235, 28, 1),(230, 0, 1)][::-1]
+        self.scores = [1000,100,50,10,5,1][::-1]
 
         
         for i in range(1,paddleBalls.topCol+paddleBalls.rows-1):
@@ -234,12 +249,17 @@ class AwardSquares(AwardSquare):
             self.squares[-1].y += 10
             self.squares[-1].w = paddleBalls.offsetW - self.squares[-1].w
         i = 0
+        a = 0
         step = (len(self.colors)/(len(self.squares)))
+        stepa = (len(self.scores)/(len(self.squares)))
         for x in range(0,len(self.squares)):
             self.squares[x].color = self.colors[int(i)]
             self.squares[-1-x].color = self.colors[int(i)]
+            self.squares[x].setScore(self.scores[int(a)])
+            self.squares[-1-x].setScore(self.scores[int(a)])
             i += step
-            print(int(i))
+            a += stepa
+
 
             
                     
