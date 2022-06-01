@@ -27,14 +27,13 @@ RIGHT_MOUSE = 3
 # screen.blit(self.title, [self.titleLoc[0], self.titleLoc[1]-50])
 
 # TODO
-# add coloring to squares
-# change color scheme
-# add score multipler text
+
 # score
 # detect collison of award squares
 
 # detection of collison with squares
 # refelection using breakout method
+# delete balls after they disappear 
 
 def sign(num):
     if num < 0:
@@ -53,6 +52,7 @@ class GameObject:
         self.yv = 0
         self.r = 7
         self.color = WHITE
+        self.deleteMe = False
         
     def update(self):
         self.x += self.xv
@@ -81,6 +81,8 @@ class PlayerBall(Ball):
         self.yv += self.g
         self.x += self.xv
         self.y += self.yv
+        if self.y > height+self.r:
+            self.deleteMe = True
         
     def reflectOffPaddle(self, paddle):
         x1 = self.x
@@ -137,6 +139,8 @@ class BallList(GameObject):
     def update(self):
         for ball in self.balls:
             ball.update()
+            if ball.deleteMe:
+                self.balls.remove(ball)
             
     def draw(self):
         for ball in self.balls:
@@ -338,7 +342,7 @@ class CollisonHandler:
             
         if collidesX and playerBall.xv > 0:
             normal = [-1,0]
-        elif collidesX and playerBall.xv <= 0:
+        if collidesX and playerBall.xv <= 0:
             normal = [1,0]
         
         if collidesY and playerBall.yv > 0:
