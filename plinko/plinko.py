@@ -76,6 +76,9 @@ class PlayerBall(Ball):
         super().__init__(x,y)
         self.color = RED
         self.friction = .5
+        self.scored = False
+        self.scoreMultiplier = 1
+        
         
     def update(self):
         self.yv += self.g
@@ -203,6 +206,7 @@ class AwardSquare(GameObject):
         
         
     def setScore(self, score):
+        self.scoreMultiplier = score
         self.textScore = self.font.render(str(score),True,self.fontColor)
     
         
@@ -278,6 +282,7 @@ class AwardSquares(AwardSquare):
             square.draw()
 #==========================================================================================================================            
 class Hud(GameObject):
+    
     def __init__(self):
         
         super().__init__(0,0)
@@ -285,34 +290,46 @@ class Hud(GameObject):
         self.score = 0
         self.textScore = self.font.render(str(self.score),True,self.color)
         self.textScoreLoc = self.textScore.get_rect(center = screen.get_rect().center)
-        
+     
+    def scorePoint(self, ballMult, squareMult):
+        self.score += ballMult * squareMult
+        self.textScore = self.font.render(str(self.score),True,self.color)
+        self.textScoreLoc = self.textScore.get_rect(center = screen.get_rect().center)
+     
+     
     def draw(self):
         screen.blit(self.textScore, [10, 10])            
 #==========================================================================================================================
 class CollisonHandler:
     
     
-    def circleCircle(self, playerBall, paddleBall):
-        x1 = playerBall.x
-        y1 = playerBall.y
-        x2 = paddleBall.x
-        y2 = paddleBall.y
+    def circleCollide(self, ball1, ball2):
+        x1 = ball1.x
+        y1 = ball1.y
+        x2 = ball2.x
+        y2 = ball2.y
         
         dist = math.sqrt((x1-x2)**2 + (y1-y2)**2)
         
-        collides = dist < playerBall.r + paddleBall.r
+        collides = dist < ball1.r + ball2.r
+        
+        return collides
+    
+    def circleCircle(self, playerBall, paddleBall):
+        
+        collides = self.circleCollide(playerBall, paddleBall)
         
         if collides:
             paddleBall.hit()
             playerBall.reflectOffPaddle(paddleBall)
         
         return collides
-    
-    
+        
     def handleBallLists(self, paddleBalls, playerBalls):
         for paddleBall in paddleBalls.balls:
             for playerBall in playerBalls.balls:
                 self.circleCircle(playerBall, paddleBall)
+                
     
     def refelectBallAndSquare(self, bottomSquare, playerBall):
         bottomSquareRect = pygame.Rect(bottomSquare.x+bottomSquare.xv, bottomSquare.y+bottomSquare.yv, bottomSquare.w, bottomSquare.h)
@@ -348,14 +365,32 @@ class CollisonHandler:
         if collidesY and playerBall.yv > 0:
             normal = [0,-1]
             
-            
-        
+                   
         speed = math.sqrt( (playerBall.x-(playerBall.xv+playerBall.x))**2 + (playerBall.y-(playerBall.yv+playerBall.y))**2)
         playerBall.xv, playerBall.yv = pygame.math.Vector2([playerBall.xv,playerBall.yv]).normalize().reflect(pygame.math.Vector2(normal)) * speed
         if abs(playerBall.xv) < 1:
             playerBall.xv += sign(playerBall.xv) * 2
+
+
+
+    def awardSquareandBall(self, ball, square):
+        ballRect = pygame.Rect(ball.x, ball.y, ball.r*2, ball.r*2)
+        squareRect = pygame.Rect(square.x, square.y, square.w, square.h)
         
-                
+        if squareRect.colliderect(ballRect) and not ball.scored:
+            return True
+        
+        return False
+
+    
+    def handleAwardSquaresAndPlayerBalls(self, hud, playerballs, awardsquares):
+        for ball in playerballs.balls:
+            for square in awardsquares.squares:
+                 if self.awardSquareandBall(ball, square):
+                     hud.scorePoint(ball.scoreMultiplier, square.scoreMultiplier)
+                     ball.scored = True
+                        
+    
     def handleBottomSquaresAndBall(self, bottomSquares, playerBalls):
         for playerBall in playerBalls.balls:
             for bottomSquare in bottomSquares.squares:
@@ -382,6 +417,7 @@ class Game:
     def handleCollisons(self):
         self.collisonHandler.handleBallLists(self.paddleBalls, self.playerBalls)
         self.collisonHandler.handleBottomSquaresAndBall(self.bottomSquares, self.playerBalls)
+        self.collisonHandler.handleAwardSquaresAndPlayerBalls(self.hud, self.playerBalls, self.awardSquares)
         
     def update(self):
         self.handleCollisons()
