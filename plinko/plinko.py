@@ -358,7 +358,7 @@ class CollisonHandler:
             collidesY = True
             
         if not collidesY and not collidesX:
-            collidesY = True
+            collidesY = False
             collidesX = True
             
         if collidesX and playerBall.xv > 0:
