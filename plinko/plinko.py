@@ -51,7 +51,7 @@ class GameObject:
         self.xv = 0 
         self.yv = 0
         self.r = 7
-        self.color = WHITE
+        self.color = "#e5e5e5"
         self.deleteMe = False
         
     def update(self):
@@ -78,6 +78,7 @@ class PlayerBall(Ball):
         self.friction = .5
         self.scored = False
         self.scoreMultiplier = 1
+        self.color = "#edf2f4"
         
         
     def update(self):
@@ -114,8 +115,8 @@ class PaddleBall(Ball):
     
     def __init__(self,x,y):
         super().__init__(x,y)
-        self.color = BLUE
-        self.outerColor = WHITE
+        self.color = "#8d99ae"
+        self.outerColor = "#495057"
         self.r = 10
         self.outerDraw = -1
         self.outerR = [2,2,5,5,7,7,7,5,5,2,2]
@@ -152,6 +153,7 @@ class BallList(GameObject):
 class PlayerBalls(BallList):
     def __init__(self):
         super().__init__()
+        self.color = "#03045e"
         
     def spawnBall(self, x, y, paddleBalls):
         if x > paddleBalls.balls[0].x and x < paddleBalls.balls[paddleBalls.topCol-1].x and paddleBalls.balls[0].y > y:
@@ -201,7 +203,8 @@ class AwardSquare(GameObject):
         self.color = RED
         self.fontColor = BLACK
         self.scoreMultiplier = 0.0
-        self.font = pygame.font.SysFont('arial', 15)
+        self.fontSize = 15
+        self.font = pygame.font.SysFont('arial', self.fontSize)
         self.textScore = self.font.render(str(self.scoreMultiplier),True,self.fontColor)
         
         
@@ -286,7 +289,8 @@ class Hud(GameObject):
     def __init__(self):
         
         super().__init__(0,0)
-        self.font = pygame.font.SysFont('arial', 30)
+        self.fontSize = 50
+        self.font = pygame.font.SysFont('arial',  self.fontSize)
         self.score = 0
         self.textScore = self.font.render(str(self.score),True,self.color)
         self.textScoreLoc = self.textScore.get_rect(center = screen.get_rect().center)
