@@ -2,6 +2,10 @@
 
 ![Asteroids](img/asteroidsPic.png)
 
+[Plinko](https://github.com/hippyclipper/games_simple/blob/main/plinko/plinko.py)
+
+![Plinko](img/plinko.png)
+
 [Pong](https://github.com/hippyclipper/games_simple/blob/main/pong/pong.py)
 
 ![pong](img/pong.png)
