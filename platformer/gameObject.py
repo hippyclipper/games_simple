@@ -11,8 +11,8 @@ class GameObject:
         self.r = 10
         self.color = WHITE
         self.g = 10
-        self.h = self.r
-        self.w = self.r
+        self.h = 0
+        self.w = 0
         
     def update(self):
         self.x += self.xv

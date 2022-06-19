@@ -4,9 +4,12 @@ from constants import *
 
 class Tile(GameObject):
     
-    def __init__(self,x,y):
+    def __init__(self,x,y,w,h):
+        
         super().__init__(x,y)
         self.color = RED
+        self.w = w
+        self.h = h
         
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
@@ -24,18 +27,11 @@ class Map(GameObject):
         file = open(self.filePath, "r")
         
         for x in file:
-            self.heightNum += 1
-            self.widthNum = max(self.widthNum, len(x))
-        self.tileW = width/self.widthNum
-        self.tileH = height/self.heightNum
+            self.level.append(x[:-1])     
         file.close()
-        file = open(self.filePath, "r")
-        for x,line in enumerate(file):
-            self.level.append([])
-            for y,tile in enumerate(line):
-                self.level[x].append(Tile(x,y))
-                
-        file.close()
+        #for each charecter in level turn that character into a tile based in the corrasponding descignated tile
+        for x in self.level:
+            print(x)
         
     def update(self):
         for row in self.level:
