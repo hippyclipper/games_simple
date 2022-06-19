@@ -1,5 +1,6 @@
 from gameObject import GameObject
-from constants import * 
+from constants import *
+import math
 
 
 class Tile(GameObject):
@@ -21,17 +22,25 @@ class Map(GameObject):
         super().__init__(0,0)
         self.filePath = "./map.txt"
         self.mapKey = {"wall": "#", "air": ".", "player": "$", "end": "@"}
-        self.widthNum = 0
-        self.heightNum = 0
         self.level = []
         file = open(self.filePath, "r")
         
         for x in file:
-            self.level.append(x[:-1])     
+            self.level.append(list(x[:-1]))     
         file.close()
-        #for each charecter in level turn that character into a tile based in the corrasponding descignated tile
-        for x in self.level:
-            print(x)
+        
+        self.widthNum = len(self.level[0])
+        self.heightNum = len(self.level)
+        self.tileWidth = math.floor(width/self.widthNum)
+        self.tileHeight = math.floor(height/self.heightNum)
+        offset = (width-(self.widthNum)*(self.tileWidth))//2
+        for y in range(self.heightNum):
+            for x in range(self.widthNum):
+                tileChar = self.level[y][x]
+                self.level[y][x] = Tile(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
+                if tileChar == ".":
+                    self.level[y][x].color = BLUE
+                
         
     def update(self):
         for row in self.level:
