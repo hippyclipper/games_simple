@@ -40,6 +40,8 @@ class Map(GameObject):
                 self.level[y][x] = Tile(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
                 if tileChar == ".":
                     self.level[y][x].color = BLUE
+                elif tileChar == "@":
+                    self.level[y][x].color = GREEN
                 
         
     def update(self):
