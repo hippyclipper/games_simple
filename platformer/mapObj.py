@@ -15,6 +15,18 @@ class Tile(GameObject):
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
     
+class Block(Tile):
+    
+    def __init__(self,x,y,w,h):
+        super().__init__(x,y,w,h)
+        self.filepath = "./assests/Idle.png"
+        self.image = pygame.image.load(self.filepath)
+        self.image = pygame.transform.scale(self.image, (self.w, self.h))
+       
+    def draw(self):
+        screen.blit(self.image, pygame.Rect(self.x, self.y, self.w, self.h ))
+        
+
 
 class Map(GameObject):
     
@@ -42,6 +54,10 @@ class Map(GameObject):
                     self.level[y][x].color = BLUE
                 elif tileChar == "@":
                     self.level[y][x].color = GREEN
+                elif tileChar == "#":
+                    self.level[y][x] = Block(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
+
+                    
                 
         
     def update(self):
