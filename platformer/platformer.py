@@ -3,7 +3,7 @@ import random
 import math
 from constants import * 
 from gameObject import GameObject
-from mapObj import Map
+from mapObj import Map, Player
 
 #==========================================================================================================================
 #==========================================================================================================================
@@ -12,6 +12,7 @@ class Game:
     
     def __init__(self):
         self.level = Map()
+        self.player = Player(self.level)
         
     def buttonEvent(self, direction, pressed):
         print(direction, "pressed =", pressed)
@@ -21,10 +22,11 @@ class Game:
         
     def update(self):
         self.level.update()
+        self.player.update()
     
     def draw(self):
         self.level.draw()
-        
+        self.player.draw()
         
 game = Game()
 
