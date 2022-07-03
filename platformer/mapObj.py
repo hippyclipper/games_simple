@@ -15,6 +15,7 @@ class Player(GameObject):
         self.w = 20
         self.h = 20
         self.grounded = False
+        self.walled = False
         self.jumpVel = 22
         self.maxXvel = 5
         
@@ -23,7 +24,10 @@ class Player(GameObject):
             self.xv = self.maxXvel
         else:
             self.xv = -self.maxXvel
-        
+            
+    def unmove(self, direction):
+        self.xv = 0
+            
     def jump(self):
         if self.grounded:
             self.grounded = False
@@ -33,7 +37,8 @@ class Player(GameObject):
         if not self.grounded:
             self.yv += self.g
             self.y += self.yv
-        self.x += self.xv
+        if not self.walled:    
+            self.x += self.xv
 
       
     def draw(self):

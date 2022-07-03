@@ -12,6 +12,54 @@ class CollisionHandler(GameObject):
     def __init__(self):
         super().__init__(0,0)
         
+    def checkPlayerX(self, player, tile):
+        walled = False
+        playerRect = pygame.Rect(player.x, player.y, player.w, player.h)
+        tileRect = pygame.Rect(tile.x, tile.y, tile.w, tile.h)
+        movedPlayer = pygame.Rect(player.x, player.y, player.w, player.h)
+        movedPlayer.x += player.xv
+        movedCollides = movedPlayer.colliderect(tileRect)
+        playerCollides = playerRect.colliderect(tileRect)
+        
+        if movedCollides and not playerCollides and player.xv > 0:
+            player.x = tile.x - player.w
+            player.xy = 0
+            walled = True
+            
+        if movedCollides and not playerCollides and player.xv < 0:
+            player.x = tile.x + tile.w
+            player.xv = 0
+            walled = True
+            
+        playerRect.x += 1
+        
+        if player.xv == 0 and playerRect.colliderect(tileRect):
+            walled = True
+            
+        playerRect.x -= 2
+        
+        if player.xv == 0 and playerRect.colliderect(tileRect):
+            walled = True
+            
+        playerRect.x += 1
+        
+        if playerRect.colliderect(tileRect):
+            print("here")
+            collidesTileLeft = abs((player.x+player.w) - tile.x) < abs(player.x - (tile.x + tile.w))
+            print(collidesTileLeft)
+            if collidesTileLeft:
+                player.x = tile.x - player.w
+                player.xy = 0
+                walled = True 
+            else:
+                player.x = tile.x + tile.w
+                player.xv = 0
+                walled = True              
+            
+                
+        return walled
+        
+        
     def checkPlayerY(self, player, tile):
         grounded = False
         playerRect = pygame.Rect(player.x, player.y, player.w, player.h)
@@ -39,13 +87,17 @@ class CollisionHandler(GameObject):
             
     def playerAndMap(self, player, level):
         grounded = False
+        walled = False
         for row in level.level:
             for tile in row:
                 if not tile.canCollide:
                     continue
+
+                walled = walled or self.checkPlayerX(player, tile)
                 grounded = grounded or self.checkPlayerY(player, tile)
                 
         player.grounded = grounded
+        player.walled = walled
 
         
 #==========================================================================================================================
@@ -58,11 +110,13 @@ class Game:
         self.collisionHandler = CollisionHandler()
         
     def buttonEvent(self, direction, pressed):
-        print(direction, "pressed =", pressed)
+        #print(direction, "pressed =", pressed)
         if direction == "space" and pressed:
             self.player.jump()
         if direction in ["right", "left"] and pressed:
             self.player.move(direction)
+        if direction in ["right", "left"] and not pressed:
+            self.player.unmove(direction)
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)
@@ -91,12 +145,12 @@ while not done:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
             game.buttonEvent("left", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
-            pass
+            game.buttonEvent("left", False)
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
             game.buttonEvent("right", True)
         if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
-            pass
+            game.buttonEvent("right", False)
             
         if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
             game.buttonEvent("up", True)
