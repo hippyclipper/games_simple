@@ -16,16 +16,25 @@ class Player(GameObject):
         self.h = 20
         self.grounded = False
         self.jumpVel = 22
+        self.maxXvel = 5
+        
+    def move(self, direction):
+        if direction == "right":
+            self.xv = self.maxXvel
+        else:
+            self.xv = -self.maxXvel
         
     def jump(self):
         if self.grounded:
             self.grounded = False
             self.yv -= self.jumpVel
-    
+            
     def update(self):
         if not self.grounded:
             self.yv += self.g
             self.y += self.yv
+        self.x += self.xv
+
       
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))    

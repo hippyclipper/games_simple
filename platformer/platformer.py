@@ -13,35 +13,41 @@ class CollisionHandler(GameObject):
         super().__init__(0,0)
         
     def checkPlayerY(self, player, tile):
-        
+        grounded = False
         playerRect = pygame.Rect(player.x, player.y, player.w, player.h)
         tileRect = pygame.Rect(tile.x, tile.y, tile.w, tile.h)
         movedPlayer = pygame.Rect(player.x, player.y, player.w, player.h)
         movedPlayer.y += player.yv
         movedCollides = movedPlayer.colliderect(tileRect)
         playerCollides = playerRect.colliderect(tileRect)
+        
         if movedCollides and not playerCollides and player.yv > 0:
             player.y = tile.y - player.h
             player.yv = 0
-            player.grounded = True
+            grounded = True
+            
         if movedCollides and not playerCollides and player.yv < 0:
             player.y = tile.y + tile.h
             player.yv = 0
-
+                    
+        playerRect.y += 1
+        
+        if player.yv == 0 and playerRect.colliderect(tileRect):
+            grounded = True
             
-        
-        
-        
-    
+        return grounded
+            
     def playerAndMap(self, player, level):
+        grounded = False
         for row in level.level:
             for tile in row:
                 if not tile.canCollide:
                     continue
-                self.checkPlayerY(player, tile)
+                grounded = grounded or self.checkPlayerY(player, tile)
+                
+        player.grounded = grounded
 
-            
-
+        
 #==========================================================================================================================
         
 class Game:
@@ -55,6 +61,8 @@ class Game:
         print(direction, "pressed =", pressed)
         if direction == "space" and pressed:
             self.player.jump()
+        if direction in ["right", "left"] and pressed:
+            self.player.move(direction)
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)
