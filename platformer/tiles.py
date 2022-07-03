@@ -9,6 +9,7 @@ class Tile(GameObject):
         self.color = RED
         self.w = w
         self.h = h
+        self.canCollide = False
       
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
@@ -29,6 +30,7 @@ class Block(ImageBlock):
     def __init__(self,x,y,w,h):
         self.filepath = "./assests/TerrainBox.png"
         super().__init__(x,y,w,h,self.filepath)
+        self.canCollide = True
     
 class Air(ImageBlock):
     

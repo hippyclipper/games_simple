@@ -4,6 +4,9 @@ import math
 from tiles import *
 
 
+
+
+
 class Player(GameObject):
     def __init__(self,level):
         super().__init__(level.playerSpawn[0],level.playerSpawn[1])
@@ -11,10 +14,12 @@ class Player(GameObject):
         self.g = 1
         self.w = 20
         self.h = 20
+        self.grounded = False
     
     def update(self):
-        self.yv += self.g
-        self.y += self.yv
+        if not self.grounded:
+            self.yv += self.g
+            self.y += self.yv
       
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))    

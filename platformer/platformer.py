@@ -6,6 +6,37 @@ from gameObject import GameObject
 from mapObj import Map, Player
 
 #==========================================================================================================================
+
+class CollisionHandler(GameObject):
+    
+    def __init__(self):
+        super().__init__(0,0)
+        
+    def checkPlayerY(self, player, tile):
+        
+        playerRect = pygame.Rect(player.x, player.y, player.w, player.h)
+        tileRect = pygame.Rect(tile.x, tile.y, tile.w, tile.h)
+        movedPlayer = pygame.Rect(player.x, player.y, player.w, player.h)
+        movedPlayer.y += player.yv
+        movedCollides = movedPlayer.colliderect(tileRect)
+        playerCollides = playerRect.colliderect(tileRect)
+        if movedCollides and not playerCollides:
+            player.y = tile.y - player.h
+            player.yv = 0
+            player.grounded = True
+        
+        
+        
+    
+    def playerAndMap(self, player, level):
+        for row in level.level:
+            for tile in row:
+                if not tile.canCollide:
+                    continue
+                self.checkPlayerY(player, tile)
+
+            
+
 #==========================================================================================================================
         
 class Game:
@@ -13,14 +44,16 @@ class Game:
     def __init__(self):
         self.level = Map()
         self.player = Player(self.level)
+        self.collisionHandler = CollisionHandler()
         
     def buttonEvent(self, direction, pressed):
         print(direction, "pressed =", pressed)
         
-    def handleCollisons(self):
-        pass
+    def handleCollisions(self):
+        self.collisionHandler.playerAndMap(self.player, self.level)
         
     def update(self):
+        self.handleCollisions()
         self.level.update()
         self.player.update()
     
