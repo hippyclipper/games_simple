@@ -3,11 +3,8 @@ from constants import *
 import math
 from tiles import *
 
-
-
-
-
 class Player(GameObject):
+    
     def __init__(self,level):
         super().__init__(level.playerSpawn[0],level.playerSpawn[1])
         self.color = GREEN
@@ -17,19 +14,20 @@ class Player(GameObject):
         self.grounded = False
         self.walled = False
         self.jumpVel = 20
-        self.maxXVel = 5
+        self.maxXVel = 8
         self.leftPress = False
         self.rightPress = False
-        
-        
-    def movementPress(self, direction, pressed):
-        
+        self.lastPress = ""
+                
+    def movementPress(self, direction, pressed):     
         if direction == "right":
             self.rightPress = pressed
         else:
             self.leftPress = pressed
             
-            
+        self.lastPress = direction
+
+                       
     def jump(self):
         if self.grounded:
             self.grounded = False
@@ -42,7 +40,10 @@ class Player(GameObject):
         elif not self.rightPress and self.leftPress:
             self.xv = -self.maxXVel
         elif self.rightPress and self.leftPress:
-            self.xv = 0
+            if self.lastPress == "right":
+                self.xv = self.maxXVel
+            else:
+                self.xv = -self.maxXVel
         else:
             self.xv = 0
         
@@ -51,7 +52,6 @@ class Player(GameObject):
             self.y += self.yv
         if not self.walled:    
             self.x += self.xv
-
       
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))    
@@ -75,6 +75,7 @@ class Map(GameObject):
         self.heightNum = len(self.level)
         self.tileWidth = math.floor(width/self.widthNum)
         self.tileHeight = math.floor(height/self.heightNum)
+        
         offset = (width-(self.widthNum)*(self.tileWidth))//2
         
         for y in range(self.heightNum):
@@ -90,9 +91,7 @@ class Map(GameObject):
                     self.level[y][x] = Air(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
                 elif tileChar == self.mapKey["wall"]:
                     self.level[y][x] = Block(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
-
-                    
-                
+              
         
     def update(self):
         for row in self.level:
@@ -103,8 +102,4 @@ class Map(GameObject):
         for row in self.level:
             for tile in row:
                 tile.draw()
-        
-        
-                                 
-            
-        
+
