@@ -113,10 +113,9 @@ class Game:
         #print(direction, "pressed =", pressed)
         if direction == "space" and pressed:
             self.player.jump()
-        if direction in ["right", "left"] and pressed:
-            self.player.move(direction)
-        if direction in ["right", "left"] and not pressed:
-            self.player.unmove(direction)
+        if direction in ["right", "left"]:
+            self.player.movementPress(direction, pressed)
+
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)

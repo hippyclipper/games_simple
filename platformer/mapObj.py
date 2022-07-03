@@ -16,17 +16,19 @@ class Player(GameObject):
         self.h = 20
         self.grounded = False
         self.walled = False
-        self.jumpVel = 22
-        self.maxXvel = 5
+        self.jumpVel = 20
+        self.maxXVel = 5
+        self.leftPress = False
+        self.rightPress = False
         
-    def move(self, direction):
+        
+    def movementPress(self, direction, pressed):
+        
         if direction == "right":
-            self.xv = self.maxXvel
+            self.rightPress = pressed
         else:
-            self.xv = -self.maxXvel
+            self.leftPress = pressed
             
-    def unmove(self, direction):
-        self.xv = 0
             
     def jump(self):
         if self.grounded:
@@ -34,6 +36,16 @@ class Player(GameObject):
             self.yv -= self.jumpVel
             
     def update(self):
+        
+        if self.rightPress and not self.leftPress:
+            self.xv = self.maxXVel
+        elif not self.rightPress and self.leftPress:
+            self.xv = -self.maxXVel
+        elif self.rightPress and self.leftPress:
+            self.xv = 0
+        else:
+            self.xv = 0
+        
         if not self.grounded:
             self.yv += self.g
             self.y += self.yv
