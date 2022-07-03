@@ -15,6 +15,12 @@ class Player(GameObject):
         self.w = 20
         self.h = 20
         self.grounded = False
+        self.jumpVel = 22
+        
+    def jump(self):
+        if self.grounded:
+            self.grounded = False
+            self.yv -= self.jumpVel
     
     def update(self):
         if not self.grounded:

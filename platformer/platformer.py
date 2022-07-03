@@ -20,10 +20,15 @@ class CollisionHandler(GameObject):
         movedPlayer.y += player.yv
         movedCollides = movedPlayer.colliderect(tileRect)
         playerCollides = playerRect.colliderect(tileRect)
-        if movedCollides and not playerCollides:
+        if movedCollides and not playerCollides and player.yv > 0:
             player.y = tile.y - player.h
             player.yv = 0
             player.grounded = True
+        if movedCollides and not playerCollides and player.yv < 0:
+            player.y = tile.y + tile.h
+            player.yv = 0
+
+            
         
         
         
@@ -48,6 +53,8 @@ class Game:
         
     def buttonEvent(self, direction, pressed):
         print(direction, "pressed =", pressed)
+        if direction == "space" and pressed:
+            self.player.jump()
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)
