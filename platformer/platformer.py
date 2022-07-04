@@ -6,6 +6,14 @@ from gameObject import GameObject
 from mapObj import Map, Player
 
 #==========================================================================================================================
+#TODO
+#add player animation/images
+#add coins
+#add enenmys
+#add accelration to player
+#add doorway to next level
+#break collision handler and player into their own file
+#==========================================================================================================================
 
 class CollisionHandler(GameObject):
     
@@ -44,9 +52,7 @@ class CollisionHandler(GameObject):
         playerRect.x += 1
         
         if playerRect.colliderect(tileRect):
-            print("here")
             collidesTileLeft = abs((player.x+player.w) - tile.x) < abs(player.x - (tile.x + tile.w))
-            print(collidesTileLeft)
             if collidesTileLeft:
                 player.x = tile.x - player.w
                 player.xy = 0
@@ -55,8 +61,7 @@ class CollisionHandler(GameObject):
                 player.x = tile.x + tile.w
                 player.xv = 0
                 walled = True              
-            
-                
+                            
         return walled
         
         

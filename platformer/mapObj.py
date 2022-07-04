@@ -3,14 +3,22 @@ from constants import *
 import math
 from tiles import *
 
+# self.filepath = filepath
+# self.image = pygame.image.load(self.filepath)
+# self.image = pygame.transform.scale(self.image, (self.w, self.h))
+# screen.blit(self.image, pygame.Rect(self.x, self.y, self.w, self.h ))
+# self.image = pygame.image.load(self.filepath)
+
 class Player(GameObject):
     
     def __init__(self,level):
+        
         super().__init__(level.playerSpawn[0],level.playerSpawn[1])
+        
         self.color = GREEN
         self.g = 1
-        self.w = 20
-        self.h = 20
+        self.w = 30
+        self.h = 30
         self.grounded = False
         self.walled = False
         self.jumpVel = 20
@@ -18,6 +26,11 @@ class Player(GameObject):
         self.leftPress = False
         self.rightPress = False
         self.lastPress = ""
+        
+        self.genFilepath = "assests/VirtualGuy/Jump.png"
+        self.image = pygame.image.load(self.genFilepath)
+        self.image = pygame.transform.scale(self.image, (self.w, self.h))
+        self.image = pygame.transform.scale(self.image, (self.w, self.h))
                 
     def movementPress(self, direction, pressed):     
         if direction == "right":
@@ -54,7 +67,7 @@ class Player(GameObject):
             self.x += self.xv
       
     def draw(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))    
+        screen.blit(self.image, pygame.Rect(self.x, self.y, self.w, self.h ))
 
       
 class Map(GameObject):
