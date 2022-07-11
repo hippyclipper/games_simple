@@ -26,11 +26,13 @@ class Player(GameObject):
         self.leftPress = False
         self.rightPress = False
         self.lastPress = ""
-        
         self.genFilepath = "assests/VirtualGuy/Jump.png"
         self.image = pygame.image.load(self.genFilepath)
-        self.image = pygame.transform.scale(self.image, (self.w, self.h))
-        self.image = pygame.transform.scale(self.image, (self.w, self.h))
+        self.imageRight = pygame.transform.scale(self.image, (self.w, self.h))
+        self.imageLeft = pygame.transform.flip(self.imageRight, True, False)
+        self.lastImage = self.imageRight
+        
+        
                 
     def movementPress(self, direction, pressed):     
         if direction == "right":
@@ -39,6 +41,7 @@ class Player(GameObject):
             self.leftPress = pressed
             
         self.lastPress = direction
+        
 
                        
     def jump(self):
@@ -59,15 +62,27 @@ class Player(GameObject):
                 self.xv = -self.maxXVel
         else:
             self.xv = 0
+            
+            
         
         if not self.grounded:
             self.yv += self.g
             self.y += self.yv
         if not self.walled:    
             self.x += self.xv
+             
+            
       
     def draw(self):
-        screen.blit(self.image, pygame.Rect(self.x, self.y, self.w, self.h ))
+        if self.xv > 0:
+            screen.blit(self.imageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+            self.lastImage = self.imageRight
+        elif self.xv < 0:
+            screen.blit(self.imageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
+            self.lastImage = self.imageLeft
+        elif self.xv == 0:
+            screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+            
 
       
 class Map(GameObject):
