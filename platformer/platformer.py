@@ -9,7 +9,6 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add accelration to player (simple)
 #add coins (first because simple animation)
 #add doorway to next level (just respawn character on contact)
 #add player animation (idle, running, jumping, falling) 

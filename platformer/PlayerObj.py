@@ -13,6 +13,7 @@ class Player(GameObject):
         self.g = 1
         self.w = 30
         self.h = 30
+        self.a = 1
         self.grounded = False
         self.walled = False
         self.jumpVel = 20
@@ -44,14 +45,14 @@ class Player(GameObject):
     def update(self):
         
         if self.rightPress and not self.leftPress:
-            self.xv = self.maxXVel
+            self.xv = min(self.maxXVel, self.xv+self.a)
         elif not self.rightPress and self.leftPress:
-            self.xv = -self.maxXVel
+            self.xv = max(-self.maxXVel, self.xv-self.a)
         elif self.rightPress and self.leftPress:
             if self.lastPress == "right":
-                self.xv = self.maxXVel
+                self.xv = min(self.maxXVel, self.xv+self.a)
             else:
-                self.xv = -self.maxXVel
+                self.xv = max(-self.maxXVel, self.xv-self.a)
         else:
             self.xv = 0            
         
