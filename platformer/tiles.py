@@ -37,3 +37,15 @@ class Air(ImageBlock):
     def __init__(self,x,y,w,h):
         self.filepath = "./assests/Blue.png"
         super().__init__(x,y,w,h,self.filepath)
+        
+class End(ImageBlock):
+    
+    def __init__(self,x,y,w,h):
+        self.filepath = "./assests/End.png"
+        super().__init__(x,y,w,h,self.filepath)
+        self.air = Air(x, y, w, h)
+        
+    def draw(self):
+        self.air.draw()
+        screen.blit(self.image, pygame.Rect(self.x, self.y, self.w, self.h ))
+        

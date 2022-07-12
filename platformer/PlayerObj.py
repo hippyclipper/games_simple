@@ -34,7 +34,7 @@ class Player(GameObject):
         elif direction == "left":
             self.leftPress = pressed
             self.lastPress = direction
-        elif direction == "space" and pressed:
+        elif direction in ["space", "up"] and pressed:
             self.jump()
                                
     def jump(self):

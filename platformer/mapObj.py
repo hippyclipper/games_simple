@@ -38,7 +38,8 @@ class Map(GameObject):
                     self.level[y][x] = Air(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
                 elif tileChar == self.mapKey["wall"]:
                     self.level[y][x] = Block(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
-              
+                elif tileChar == self.mapKey["end"]:
+                    self.level[y][x] = End(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)              
         
     def update(self):
         for row in self.level:

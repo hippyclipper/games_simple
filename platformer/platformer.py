@@ -9,8 +9,8 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add coins (first because simple animation)
 #add doorway to next level (just respawn character on contact)
+#add coins (first because simple animation)
 #add player animation (idle, running, jumping, falling) 
 #add enenmys (hardest, least needed)
 #==========================================================================================================================
