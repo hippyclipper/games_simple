@@ -3,15 +3,33 @@ from constants import *
 import math
 from tiles import *
 
+class Item(GameObject):
+    
+    def __init__(self,x,y):
+        super().__init__(x,y)    
+
+class Items(GameObject):
+    
+    def __init__(self, level):
+        super().__init__(0,0)
+        self.items = []
+        for point in level.items:
+            self.items.append(Item(point[0],point[1]))
+    
+    def draw(self):
+        for item in self.items:
+            item.draw()
+
 
 class Map(GameObject):
     
     def __init__(self):
         super().__init__(0,0)
         self.filePath = "./map.txt"
-        self.mapKey = {"wall": "#", "air": ".", "player": "$", "end": "@"}
+        self.mapKey = {"wall": "#", "air": ".", "player": "$", "end": "@", "strawberry": "S"}
         self.level = []
         self.playerSpawn = [0,0]
+        self.items = []
         file = open(self.filePath, "r")
         
         for x in file:
@@ -39,7 +57,10 @@ class Map(GameObject):
                 elif tileChar == self.mapKey["wall"]:
                     self.level[y][x] = Block(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
                 elif tileChar == self.mapKey["end"]:
-                    self.level[y][x] = End(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)              
+                    self.level[y][x] = End(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
+                elif tileChar == self.mapKey["strawberry"]:
+                    self.level[y][x] = Air(x*self.tileWidth+offset, y*self.tileHeight+offset, self.tileWidth, self.tileHeight)
+                    self.items.append((x*self.tileWidth+offset+(self.tileWidth//2),y*self.tileHeight+offset+(self.tileHeight//2)))
         
     def update(self):
         for row in self.level:

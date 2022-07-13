@@ -3,7 +3,7 @@ import random
 import math
 from constants import * 
 from gameObject import GameObject
-from mapObj import Map
+from mapObj import Map, Items
 from CollisionHandlerObj import CollisionHandler
 from PlayerObj import Player
 
@@ -26,11 +26,11 @@ class Game:
     def __init__(self):
         self.level = Map()
         self.player = Player(self.level)
+        self.items = Items(self.level)
         self.collisionHandler = CollisionHandler()
         
     def buttonEvent(self, direction, pressed):
         self.player.movementPress(direction, pressed)
-
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)
@@ -38,10 +38,12 @@ class Game:
     def update(self):
         self.handleCollisions()
         self.level.update()
+        self.items.update()
         self.player.update()
     
     def draw(self):
         self.level.draw()
+        self.items.draw()
         self.player.draw()
         
 game = Game()
