@@ -3,14 +3,13 @@ import random
 import math
 from constants import * 
 from gameObject import GameObject
-from mapObj import Map, Items
+from mapObj import Map
+from ItemObj import Items
 from CollisionHandlerObj import CollisionHandler
 from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add doorway to next level (just respawn character on contact)
-#add coins (first because simple animation)
 #add player animation (idle, running, jumping, falling) 
 #add enenmys (hardest, least needed)
 #==========================================================================================================================
