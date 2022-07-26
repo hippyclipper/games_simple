@@ -56,6 +56,14 @@ class Player(GameObject):
             self.idleImages.append(self.idleSheet.subsurface(pygame.Rect(5+(x*22)+(x*10),6,22,26)))
 
         #self.spriteSheet.subsurface(pygame.Rect(self.ix+(image*self.pixelOffset), self.iy, self.iw, self.ih))
+            
+        self.runningFilePath = "assests/VirtualGuy/Run(32x32).png"
+        self.runningSheet = pygame.image.load(self.runningFilePath)
+        self.runningframeNum = 10
+        self.runningSheetSize = self.runningSheet.get_size()
+        self.runningImages = []
+        for x in range(self.runningframeNum):
+            self.runningImages.append(self.runningSheet.subsurface(pygame.Rect(5+(x*22)+(x*10),4,22,28)))
         
                         
     def movementPress(self, direction, pressed):     
@@ -98,11 +106,13 @@ class Player(GameObject):
     def draw(self):
         if self.xv > 0 and self.yv == 0:
             #right on ground
-            screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+            #screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.runningImages[int(self.counter*2)%len(self.runningImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
             self.lastImage = self.jumpImageRight
         elif self.xv < 0 and self.yv == 0:
             #left on ground
-            screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
+            #screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(pygame.transform.flip(self.runningImages[int(self.counter*2)%len(self.runningImages)],True, False), pygame.Rect(self.x, self.y, self.w, self.h ))
             self.lastImage = self.jumpImageLeft
         elif self.xv == 0 and self.yv == 0:
             #idle pygame.transform.flip(self.jumpImageRight, True, False)

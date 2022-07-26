@@ -10,7 +10,7 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add player animation (idle, running) 
+#add player animation (running) 
 #add enenmys (hardest, least needed)
 #exit and strawberry collioson
 #==========================================================================================================================
