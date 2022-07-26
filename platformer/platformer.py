@@ -10,8 +10,9 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add player animation (idle, running, jumping, falling) 
+#add player animation (idle, running) 
 #add enenmys (hardest, least needed)
+#exit and strawberry collioson
 #==========================================================================================================================
 #COPYPASTA
 # self.image = pygame.image.load(self.filepath)

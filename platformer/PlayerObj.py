@@ -10,12 +10,16 @@ import pygame
 #if not moving then idle
 
 
-
+#22x25 width and height of single guy
+#10 distance between each guy in sprite sheet
+#5 starting offset from boarder
+#6 down from the top
 class Player(GameObject):
     
     def __init__(self,level):
         
         super().__init__(level.playerSpawn[0],level.playerSpawn[1])
+        self.counter = 0
         self.color = GREEN
         self.g = 1
         self.w = 30
@@ -41,10 +45,14 @@ class Player(GameObject):
         
         self.lastImage = self.jumpImageRight
         
-        self.idleFilePath = None
-        self.idleSheet = None
-        self.idleSheetSize = None
+        self.idleFilePath = "assests/VirtualGuy/Idle(32x32).png"
+        self.idleSheet = pygame.image.load(self.idleFilePath)
+        self.idleframeNum = 10
+        self.idleSheetSize = self.idleSheet.get_size()
         self.idleImages = []
+        for x in range(self.idleframeNum):
+            self.idleImages.append(self.idleSheet.subsurface(pygame.Rect(5+(x*22)+(x*10),6,22,26)))
+
         #self.spriteSheet.subsurface(pygame.Rect(self.ix+(image*self.pixelOffset), self.iy, self.iw, self.ih))
         
                         
@@ -82,6 +90,8 @@ class Player(GameObject):
             self.y += self.yv
         if not self.walled:    
             self.x += self.xv
+            
+        self.counter += .2
                   
     def draw(self):
         if self.xv > 0 and self.yv == 0:
@@ -94,7 +104,9 @@ class Player(GameObject):
             self.lastImage = self.jumpImageLeft
         elif self.xv == 0 and self.yv == 0:
             #idle
-            screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+            #screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.idleImages[int(self.counter)%len(self.idleImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
+
         elif self.yv > 0 and self.xv > 0:
             #falling right
             screen.blit(self.fallImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
