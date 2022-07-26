@@ -13,7 +13,7 @@ class Item(GameObject):
         self.sheetSize = self.spriteSheet.get_size()
         self.pixelOffset = 32
         self.numPic = 0
-        self.frameWait = 3
+        self.frameWait = 5
         self.counter = 0
         self.spriteNum = 17
         self.ix = self.sheetSize[1]*.25

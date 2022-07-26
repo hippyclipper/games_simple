@@ -20,6 +20,7 @@ class Player(GameObject):
         
         super().__init__(level.playerSpawn[0],level.playerSpawn[1])
         self.counter = 0
+        self.countDelta = .2
         self.color = GREEN
         self.g = 1
         self.w = 30
@@ -32,6 +33,7 @@ class Player(GameObject):
         self.leftPress = False
         self.rightPress = False
         self.lastPress = ""
+
         
         self.jumpFilepath = "assests/VirtualGuy/Jump.png"
         self.jumpImage = pygame.image.load(self.jumpFilepath)
@@ -91,7 +93,7 @@ class Player(GameObject):
         if not self.walled:    
             self.x += self.xv
             
-        self.counter += .2
+        self.counter += self.countDelta 
                   
     def draw(self):
         if self.xv > 0 and self.yv == 0:
@@ -103,10 +105,13 @@ class Player(GameObject):
             screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
             self.lastImage = self.jumpImageLeft
         elif self.xv == 0 and self.yv == 0:
-            #idle
+            #idle pygame.transform.flip(self.jumpImageRight, True, False)
             #screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
-            screen.blit(self.idleImages[int(self.counter)%len(self.idleImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
-
+            if self.lastPress == "left":
+                screen.blit(pygame.transform.flip(self.idleImages[int(self.counter)%len(self.idleImages)], True, False), pygame.Rect(self.x, self.y, self.w, self.h ))
+            else:
+                screen.blit(self.idleImages[int(self.counter)%len(self.idleImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
+                
         elif self.yv > 0 and self.xv > 0:
             #falling right
             screen.blit(self.fallImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
