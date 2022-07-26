@@ -10,7 +10,9 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add enenmys (hardest, least needed)
+#clean up animation/hit ditection
+#balance levels
+#make video on streamable
 #==========================================================================================================================
 #COPYPASTA
 # self.image = pygame.image.load(self.filepath)
