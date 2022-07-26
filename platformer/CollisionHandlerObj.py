@@ -92,6 +92,14 @@ class CollisionHandler(GameObject):
         walled = False
         for row in level.level:
             for tile in row:
+                if tile.name == "end":
+
+                    if self.hasCollided(player,tile):
+                        player.ended = True
+                    else:
+                        player.ended = False
+
+                        
                 if not tile.canCollide:
                     continue
 

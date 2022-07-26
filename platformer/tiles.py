@@ -10,6 +10,7 @@ class Tile(GameObject):
         self.w = w
         self.h = h
         self.canCollide = False
+        self.name = ""
       
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
@@ -44,6 +45,7 @@ class End(ImageBlock):
         self.filepath = "./assests/End.png"
         super().__init__(x,y,w,h,self.filepath)
         self.air = Air(x, y, w, h)
+        self.name = "end"
         
     def draw(self):
         self.air.draw()

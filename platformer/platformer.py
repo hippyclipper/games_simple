@@ -29,6 +29,11 @@ class Game:
         self.items = Items(self.level)
         self.collisionHandler = CollisionHandler()
         
+    def reset(self):
+        self.level = Map()
+        self.player = Player(self.level)
+        self.items = Items(self.level)        
+        
     def buttonEvent(self, direction, pressed):
         self.player.movementPress(direction, pressed)
         
@@ -41,6 +46,8 @@ class Game:
         self.level.update()
         self.items.update()
         self.player.update()
+        if self.player.reset:
+            self.reset()
     
     def draw(self):
         self.level.draw()
