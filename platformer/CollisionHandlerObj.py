@@ -8,6 +8,15 @@ class CollisionHandler(GameObject):
     def __init__(self):
         super().__init__(0,0)
         
+        
+    def hasCollided(self,square1, square2):
+        
+        rect1 = pygame.Rect(square1.x, square1.y, square1.w, square1.h)
+        rect2 = pygame.Rect(square2.x, square2.y, square2.w, square2.h)
+        
+        return rect1.colliderect(rect2)
+        
+        
     def checkPlayerX(self, player, tile):
         walled = False
         playerRect = pygame.Rect(player.x, player.y, player.w, player.h)
@@ -91,3 +100,11 @@ class CollisionHandler(GameObject):
                 
         player.grounded = grounded
         player.walled = walled
+        
+    def playerAndItems(self, player, items):
+        for item in items.items:
+            if self.hasCollided(player,item):
+                item.deleteMe = True
+
+        
+        

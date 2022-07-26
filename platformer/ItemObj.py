@@ -54,8 +54,12 @@ class Items(GameObject):
             self.items.append(Item(point[0],point[1],level.tileWidth,level.tileHeight))
             
     def update(self):
+        
         for item in self.items:
             item.update()
+        for item in self.items:
+            if item.deleteMe:
+                self.items.remove(item)
             
     def draw(self):
         for item in self.items:

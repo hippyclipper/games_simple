@@ -34,6 +34,7 @@ class Game:
         
     def handleCollisions(self):
         self.collisionHandler.playerAndMap(self.player, self.level)
+        self.collisionHandler.playerAndItems(self.player, self.items)
         
     def update(self):
         self.handleCollisions()

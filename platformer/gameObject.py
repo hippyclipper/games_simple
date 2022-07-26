@@ -13,6 +13,7 @@ class GameObject:
         self.g = 10
         self.h = 0
         self.w = 0
+        self.deleteMe = False
         
     def update(self):
         self.x += self.xv
