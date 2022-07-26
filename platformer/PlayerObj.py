@@ -111,6 +111,7 @@ class Player(GameObject):
             self.reset = True
                   
     def draw(self):
+        #yeah i know. 
         if self.xv > 0 and self.yv == 0:
             #right on ground
             #screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))

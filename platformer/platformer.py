@@ -10,9 +10,7 @@ from PlayerObj import Player
 
 #==========================================================================================================================
 #TODO
-#add player animation (running) 
 #add enenmys (hardest, least needed)
-#exit and strawberry collioson
 #==========================================================================================================================
 #COPYPASTA
 # self.image = pygame.image.load(self.filepath)
@@ -24,13 +22,16 @@ from PlayerObj import Player
 class Game:
     
     def __init__(self):
-        self.level = Map()
+        self.stage = 0
+        self.stages = 5
+        self.level = Map(self.stage)
         self.player = Player(self.level)
         self.items = Items(self.level)
         self.collisionHandler = CollisionHandler()
         
     def reset(self):
-        self.level = Map()
+        self.stage += 1
+        self.level = Map(self.stage%self.stages)
         self.player = Player(self.level)
         self.items = Items(self.level)        
         

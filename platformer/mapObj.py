@@ -6,14 +6,15 @@ from tiles import *
 
 class Map(GameObject):
     
-    def __init__(self):
+    def __init__(self,levelNum):
         super().__init__(0,0)
-        self.filePath = "./map.txt"
+        self.filePath = "./map" + str(levelNum) + ".txt"
         self.mapKey = {"wall": "#", "air": ".", "player": "$", "end": "@", "strawberry": "S"}
         self.level = []
         self.playerSpawn = [0,0]
         self.items = []
         file = open(self.filePath, "r")
+        print(self.filePath)
         
         for x in file:
             self.level.append(list(x[:-1]))     
