@@ -7,7 +7,13 @@ class CollisionHandler(GameObject):
     
     def __init__(self):
         super().__init__(0,0)
+     
+    def hasCollidedPoint(self,square1, square2):
         
+        rect1 = pygame.Rect(square1.x-(square1.w//4), square1.y-(square1.h//4), square1.w+(square1.w//2), square1.h+(square1.h//2))
+        pointSquare2 = (square2.x+(square2.w//2), square2.y+(square2.h//2))
+
+        return rect1.collidepoint(pointSquare2)        
         
     def hasCollided(self,square1, square2):
         
@@ -111,7 +117,7 @@ class CollisionHandler(GameObject):
         
     def playerAndItems(self, player, items):
         for item in items.items:
-            if self.hasCollided(player,item):
+            if self.hasCollidedPoint(player,item):
                 item.deleteMe = True
 
         

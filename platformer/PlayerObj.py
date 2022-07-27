@@ -103,6 +103,7 @@ class Player(GameObject):
             self.y += self.yv
         if not self.walled:    
             self.x += self.xv
+
             
         self.counter += self.countDelta
         if self.ended:
@@ -111,29 +112,36 @@ class Player(GameObject):
             self.reset = True
                   
     def draw(self):
-        #yeah i know. 
+        #yeah i know.
+
+            
         if self.xv > 0 and self.yv == 0:
             #right on ground
             #screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
-            screen.blit(self.runningImages[int(self.counter*2)%len(self.runningImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.runningImages[int(self.counter*2)%len(self.runningImages)], pygame.Rect(self.x+7, self.y+3, self.w, self.h ))
             self.lastImage = self.jumpImageRight
+            
         elif self.xv < 0 and self.yv == 0:
             #left on ground
             #screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
-            screen.blit(pygame.transform.flip(self.runningImages[int(self.counter*2)%len(self.runningImages)],True, False), pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(pygame.transform.flip(self.runningImages[int(self.counter*2)%len(self.runningImages)],True, False), pygame.Rect(self.x, self.y+3, self.w, self.h ))
             self.lastImage = self.jumpImageLeft
+            
         elif self.xv == 0 and self.yv == 0 and self.grounded:
             #idle pygame.transform.flip(self.jumpImageRight, True, False)
             #screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
             if self.lastPress == "left":
-                screen.blit(pygame.transform.flip(self.idleImages[int(self.counter)%len(self.idleImages)], True, False), pygame.Rect(self.x, self.y, self.w, self.h ))
+                screen.blit(pygame.transform.flip(self.idleImages[int(self.counter)%len(self.idleImages)], True, False), pygame.Rect(self.x, self.y+3, self.w, self.h))
             else:
-                screen.blit(self.idleImages[int(self.counter)%len(self.idleImages)], pygame.Rect(self.x, self.y, self.w, self.h ))
+                screen.blit(self.idleImages[int(self.counter)%len(self.idleImages)], pygame.Rect(self.x+8, self.y+3, self.w, self.h ))
         elif self.xv == 0 and self.yv == 0 and not self.grounded:
-            screen.blit(self.lastImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+            if self.lastPress == "right":
+                screen.blit(self.jumpImageRight, pygame.Rect(self.x+8, self.y, self.w, self.h ))
+            else:
+                screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
         elif self.yv > 0 and self.xv > 0:
             #falling right
-            screen.blit(self.fallImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.fallImageRight, pygame.Rect(self.x+8, self.y, self.w, self.h ))
             self.lastImage = self.fallImageRight
         elif self.yv > 0 and self.xv < 0:
             #fall left
@@ -145,19 +153,20 @@ class Player(GameObject):
             self.lastImage = self.jumpImageLeft            
         elif self.yv < 0 and self.xv > 0:
             #jump right
-            screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.jumpImageRight, pygame.Rect(self.x+8, self.y, self.w, self.h ))
             self.lastImage = self.jumpImageRight           
         elif self.yv > 0 and self.xv == 0:
             if self.lastPress == "right":
-                screen.blit(self.fallImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+                screen.blit(self.fallImageRight, pygame.Rect(self.x+8, self.y, self.w, self.h ))
                 self.lastImage = self.fallImageRight
             else:
                 screen.blit(self.fallImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
                 self.lastImage = self.fallImageLeft
         elif self.yv < 0 and self.xv == 0:
             if self.lastPress == "right":
-                screen.blit(self.jumpImageRight, pygame.Rect(self.x, self.y, self.w, self.h ))
+                screen.blit(self.jumpImageRight, pygame.Rect(self.x+8, self.y, self.w, self.h ))
                 self.lastImage = self.jumpImageRight
             else:
                 screen.blit(self.jumpImageLeft, pygame.Rect(self.x, self.y, self.w, self.h ))
-                self.lastImage = self.jumpImageLeft          
+                self.lastImage = self.jumpImageLeft
+                

@@ -11,8 +11,6 @@ from PlayerObj import Player
 #==========================================================================================================================
 #TODO
 #clean up animation/hit ditection
-#balance levels
-#make video on streamable
 #==========================================================================================================================
 #COPYPASTA
 # self.image = pygame.image.load(self.filepath)
