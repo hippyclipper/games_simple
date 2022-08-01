@@ -8,6 +8,10 @@ https://user-images.githubusercontent.com/79437955/181308271-8fd4253f-8d4c-46c0-
 
 <img src="./img/asteroidsPic.png" alt="Asteroids" width="300" height="300">
 
+[Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tiktactoe.py)
+
+<img src="./img/tictactoecrop.gif" alt="breakout" aspect-ratio="16/9" height="300">
+
 [Plinko](https://github.com/hippyclipper/games_simple/blob/main/plinko/plinko.py)
 
 <img src="./img/plinko.png" alt="Plinko" width="300" height="300">
@@ -23,5 +27,4 @@ https://user-images.githubusercontent.com/79437955/181308271-8fd4253f-8d4c-46c0-
 [snake](https://github.com/hippyclipper/games_simple/blob/main/snake/snake.py)
 
 <img src="./img/snake.png" alt="snake" width="300" height="300">
-
 
