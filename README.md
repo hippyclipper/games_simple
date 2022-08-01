@@ -8,7 +8,7 @@ https://user-images.githubusercontent.com/79437955/181308271-8fd4253f-8d4c-46c0-
 
 <img src="./img/asteroidsPic.png" alt="Asteroids" width="300" height="300">
 
-[Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tiktactoe.py)
+[Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tictaktoe.py)
 
 <img src="./img/tictactoecrop.gif" alt="breakout" aspect-ratio="16/9" height="300">
 
