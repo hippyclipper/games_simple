@@ -8,13 +8,15 @@ https://user-images.githubusercontent.com/79437955/181308271-8fd4253f-8d4c-46c0-
 
 https://user-images.githubusercontent.com/79437955/182755684-2a880066-7dbe-4155-84c8-f86da675e259.mp4
 
+[Plinko](https://github.com/hippyclipper/games_simple/blob/main/plinko/plinko.py)
+
+
+https://user-images.githubusercontent.com/79437955/182761891-cae71737-ee0b-494c-b1fe-dd9b1f0cd04b.mp4
+
 [Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tictaktoe.py)
 
 <img src="./img/tictactoecrop.gif" alt="breakout" aspect-ratio="16/9" height="300">
 
-[Plinko](https://github.com/hippyclipper/games_simple/blob/main/plinko/plinko.py)
-
-<img src="./img/plinko.png" alt="Plinko" width="300" height="300">
 
 [Pong](https://github.com/hippyclipper/games_simple/blob/main/pong/pong.py)
 
