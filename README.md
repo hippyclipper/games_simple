@@ -6,7 +6,7 @@ https://user-images.githubusercontent.com/79437955/181308271-8fd4253f-8d4c-46c0-
 
 [Asteroids](https://github.com/hippyclipper/games_simple/blob/main/asteroids/asteroidsMain.py)
 
-<img src="./img/asteroidsPic.png" alt="Asteroids" width="300" height="300">
+https://user-images.githubusercontent.com/79437955/182755684-2a880066-7dbe-4155-84c8-f86da675e259.mp4
 
 [Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tictaktoe.py)
 
