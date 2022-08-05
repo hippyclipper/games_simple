@@ -27,5 +27,6 @@ https://user-images.githubusercontent.com/79437955/182975784-c921425a-224d-4638-
 
 [snake](https://github.com/hippyclipper/games_simple/blob/main/snake/snake.py)
 
-<img src="./img/snake.png" alt="snake" width="300" height="300">
+https://user-images.githubusercontent.com/79437955/182976677-3dfb6122-84f8-4b43-86a7-9876b3e797b8.mp4
+
 
