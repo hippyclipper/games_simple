@@ -14,12 +14,11 @@ https://user-images.githubusercontent.com/79437955/182761891-cae71737-ee0b-494c-
 
 [Tic tac toe](https://github.com/hippyclipper/games_simple/blob/main/tiktaktoe/tictaktoe.py)
 
-
 https://user-images.githubusercontent.com/79437955/182972521-4b56a7f5-febc-45a0-9d8e-3d6de9b3c84e.mp4
 
 [Pong](https://github.com/hippyclipper/games_simple/blob/main/pong/pong.py)
 
-https://user-images.githubusercontent.com/79437955/182975005-45dbe60b-1210-4eeb-81ab-74f37dd191bc.mp4
+https://user-images.githubusercontent.com/79437955/182976898-cf96ace8-3f38-462f-9a01-8f5b9af70575.mp4
 
 [breakout](https://github.com/hippyclipper/games_simple/blob/main/breakout/breakout.py)
 
