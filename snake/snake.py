@@ -12,10 +12,10 @@ pygame.mixer.init()
 pygame.font.init()
 screen = pygame.display.set_mode((width,height))
 clock = pygame.time.Clock()
-RED = (255,0,0)
-BLUE = (0,0,255)
+RED = "#E63946"
+BLUE = "#F1FAEE"
 GREEN = (0,255,0)
-BACKGROUND = (5, 5, 5)
+BACKGROUND = "#1D3557"
 WHITE = (255,255,255)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
@@ -52,6 +52,9 @@ class PlayerSquare(GameObject):
     def __init__(self,x,y):
         super().__init__(x,y)
         self.color = WHITE
+        
+    def draw(self):
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.x+2, self.y+2, self.w-4, self.h-4 ))
  
         
 #==========================================================================================================================
@@ -60,7 +63,7 @@ class FoodSquare(GameObject):
     
     def __init__(self):
         super().__init__(0,0)
-        self.color = BLUE
+        self.color = RED
 
         self.possible = []
         i = 0
