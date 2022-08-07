@@ -47,23 +47,32 @@ class Bird(GameObject):
     
     def __init__(self):
         super().__init__(width//4, height//2)
-        self.jumpV  = 25
+        self.jumpV  = 18  
+        self.dead = False
+        self.grounded = False
         
     def jump(self):
-        self.yv = -self.jumpV
+        if not self.dead:
+            self.yv = -self.jumpV
+        
+    def die(self):
+        self.dead = True
+        self.yv = max(0,self.yv)
         
     def handlePress(self, direction, pressed):
         if direction == "space" and pressed:
             self.jump()
             
     def update(self):
-        self.yv += self.g
-        self.y += self.yv
+        if not self.grounded:
+            self.yv += self.g
+            self.y += self.yv
+        
         
 class Ground(GameObject):
 
     def __init__(self):
-        self.h = 10
+        self.h = 50
         super().__init__(0,height-self.h)
         self.w = width
         
@@ -74,52 +83,98 @@ class Pipe(GameObject):
     
     def __init__(self,x,y,h):
         super().__init__(x,y)
-        self.w = 10
+        self.w = 50
         self.h = h
+        self.xv = -2
                
     def update(self):
-        self.x -= 1
+        self.x += self.xv
+        
+    def stop(self):
+        self.xv = 0
         
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
 
 class Pipes(GameObject):
     
-    def __init__(self):
+    def __init__(self,ground):
         super().__init__(width,0)
         self.pipes = []
-        self.gapSize = 100
+        self.gapSize = 220
+        self.waitTime = 140
+        self.counter = self.waitTime
+        self.border = 20
+        self.groundHeight = ground.h
         self.addPipe()
+
+    def stop(self):
+        for pipe in self.pipes:
+            pipe.stop()
     
     def addPipe(self):
-        randY = random.randint(0,height-self.gapSize)
+        randY = random.randint(self.border, height - self.gapSize - self.border - self.groundHeight)
         pipe1 = Pipe(width, 0, randY)
         pipe2 = Pipe(width, self.gapSize+randY, height-(self.gapSize+randY) )
         self.pipes.append(pipe1)
         self.pipes.append(pipe2)
         
     def update(self):
+        self.counter -= 1
+        if self.counter == 0:
+            self.addPipe()
+            self.counter = self.waitTime
         for pipe in self.pipes:
             pipe.update()
             
     def draw(self):
         for pipe in self.pipes:
             pipe.draw()
+
+
+
+class Collisions(GameObject):
+    
+    def __init__(self):
+        super().__init__(0,0)
+    
+    def playerCollides(self, player, square):
+        rect1 = pygame.Rect(player.x-player.r, player.y-player.r, player.r*2, player.r*2)
+        rect2 = pygame.Rect(square.x, square.y, square.w, square.h )
+        return rect2.colliderect(rect1)
+    
+    
+    def handleBirdAndPipes(self, bird, pipes, ground):
+
+        for pipe in pipes.pipes:
+            if self.playerCollides(bird,pipe):
+                bird.die()
+                
+        if self.playerCollides(bird,ground):
+            bird.die()
+            bird.y = ground.y - bird.r
+            bird.grounded = True
+        
+        if bird.dead:
+            pipes.stop()
+                
         
 class Game:
     
     def __init__(self):
         self.bird = Bird()
-        self.pipes = Pipes()
         self.ground = Ground()
+        self.pipes = Pipes(self.ground)
+        self.collisions = Collisions()
         
     def buttonEvent(self, direction, pressed):
         self.bird.handlePress(direction, pressed)
         
     def handleCollisons(self):
-        pass
+        self.collisions.handleBirdAndPipes(self.bird, self.pipes, self.ground)
         
     def update(self):
+        self.handleCollisons()
         self.bird.update()
         self.pipes.update()
         self.ground.update()
