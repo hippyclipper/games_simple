@@ -18,6 +18,22 @@ BACKGROUND = (5, 5, 5)
 COLORLIST = [RED, GREEN, BLUE]
 done = False
 
+# self.idleFilePath = "assests/VirtualGuy/Idle(32x32).png"
+# self.idleSheet = pygame.image.load(self.idleFilePath)
+# self.idleframeNum = 10
+# self.idleSheetSize = self.idleSheet.get_size()
+# self.idleImages = []
+# for x in range(self.idleframeNum):
+# self.idleImages.append(self.idleSheet.subsurface(pygame.Rect(5+(x*22)+(x*10),6,22,26)))
+# self.fallFilepath = "assests/VirtualGuy/Fall.png"
+# self.fallImage = pygame.image.load(self.fallFilepath)
+# self.fallImage = self.fallImage.subsurface(pygame.Rect(5,6,23,26)) 
+# self.fallImage = pygame.transform.smoothscale(self.fallImage, (self.w, self.h))
+# self.fallImageRight = self.fallImage 
+# self.fallImageLeft = pygame.transform.flip(self.fallImageRight, True, False)
+
+
+
 class GameObject:
     
     def __init__(self,x,y):
@@ -106,13 +122,20 @@ class Pipes(GameObject):
         self.counter = self.waitTime
         self.border = 20
         self.groundHeight = ground.h
+        self.keepSpawning = True
+        
+        
+        
         self.addPipe()
 
     def stop(self):
+        self.keepSpawning = False
         for pipe in self.pipes:
             pipe.stop()
     
     def addPipe(self):
+        if not self.keepSpawning:
+            return
         randY = random.randint(self.border, height - self.gapSize - self.border - self.groundHeight)
         pipe1 = Pipe(width, 0, randY)
         pipe2 = Pipe(width, self.gapSize+randY, height-(self.gapSize+randY) )
@@ -158,7 +181,11 @@ class Collisions(GameObject):
         if bird.dead:
             pipes.stop()
                 
-        
+   
+   
+   
+   
+   
 class Game:
     
     def __init__(self):
@@ -166,14 +193,32 @@ class Game:
         self.ground = Ground()
         self.pipes = Pipes(self.ground)
         self.collisions = Collisions()
+        self.restartTimer = 0
+        self.deathResetTime = 100
         
+      
+    def reset(self):
+        self.bird = Bird()
+        self.ground = Ground()
+        self.pipes = Pipes(self.ground)
+        self.collisions = Collisions()
+        self.restartTimer = 0
+          
     def buttonEvent(self, direction, pressed):
         self.bird.handlePress(direction, pressed)
         
     def handleCollisons(self):
         self.collisions.handleBirdAndPipes(self.bird, self.pipes, self.ground)
-        
+    
+    
+    def checkBirdDeath(self):
+        if self.bird.dead:
+            self.restartTimer += 1
+            if self.restartTimer == self.deathResetTime:
+                self.reset()
+    
     def update(self):
+        self.checkBirdDeath()
         self.handleCollisons()
         self.bird.update()
         self.pipes.update()
