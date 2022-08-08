@@ -28,11 +28,13 @@ done = False
 # self.fallFilepath = "assests/VirtualGuy/Fall.png"
 # self.fallImage = pygame.image.load(self.fallFilepath)
 # self.fallImage = self.fallImage.subsurface(pygame.Rect(5,6,23,26)) 
-# self.fallImage = pygame.transform.smoothscale(self.fallImage, (self.w, self.h))
-# self.fallImageRight = self.fallImage 
+# self.fallImage = pygame.transform.smoothscale(self.fallImage, (self.w, self.h)) 
 # self.fallImageLeft = pygame.transform.flip(self.fallImageRight, True, False)
 
-
+#TODO
+#bird animations
+#   3 frames/wing flap/tilt based on yv
+#score
 
 class GameObject:
     
@@ -63,10 +65,26 @@ class Bird(GameObject):
     
     def __init__(self):
         super().__init__(width//4, height//2)
+        self.r = self.r*2
+        self.frameCounter = 0
+        self.frameJump = .2
+        self.birdFrames = []
         self.jumpV  = 18  
         self.dead = False
         self.grounded = False
         self.color = RED
+        self.birdFilePath = "./assets/Bird/Bird_spritesheet.png"
+        self.birdImage = pygame.image.load(self.birdFilePath)
+        #birdspritwidth = 482 startingXoffset = 19 startingYoffset = 100 birdheight = 315
+        self.birdFrames.append(self.birdImage.subsurface(pygame.Rect(1041,98,482,315)))
+        self.birdFrames.append(self.birdImage.subsurface(pygame.Rect(1041,610,482,315)))
+        self.birdFrames.append(self.birdImage.subsurface(pygame.Rect(17,610 ,482,315)))
+        
+
+        for i,frame in enumerate(self.birdFrames):
+            self.birdFrames[i] = pygame.transform.smoothscale(frame, (self.r*2*1.53, self.r*2))
+        
+        
         
     def jump(self):
         if not self.dead:
@@ -81,9 +99,14 @@ class Bird(GameObject):
             self.jump()
             
     def update(self):
+        self.frameCounter += self.frameJump
         self.yv += self.g
         self.y += self.yv
 
+    def draw(self):
+        #pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+        screen.blit(self.birdFrames[int(self.frameCounter)%len(self.birdFrames)], pygame.Rect(self.x-(self.r*1.5), self.y-(self.r), self.r*2, self.r*2 ))
+        #pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 class Background(GameObject):
     
@@ -129,15 +152,23 @@ class Pipe(GameObject):
     
     def __init__(self,x,y,h,topPipe):
         super().__init__(x,y)
-        self.w = 100
+        self.w = 120
         self.h = h
         self.xv = -2
         self.topPipe = topPipe
         self.color = BLUE
+        self.buffer = 1.4
+        
+        self.imageW = self.w
+        self.imageH = height
+        
 
         self.pipeFilePath = "./assets/Background/top_pipe-sheet0.png"
         self.pipeImage = pygame.image.load(self.pipeFilePath)        
-        self.pipeImage = pygame.transform.smoothscale(self.pipeImage, (self.w, height))
+        self.pipeImage = pygame.transform.smoothscale(self.pipeImage, (self.imageW , self.imageH ))
+
+        
+
                
     def update(self):
         self.x += self.xv
@@ -148,16 +179,20 @@ class Pipe(GameObject):
     def draw(self):
         
         if not self.topPipe:
-            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+            #pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y, self.imageW, self.imageH ))
+            #pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+            
         else:
-            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y-height+self.h , self.w, self.h ))
+            #pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y-height+self.h , self.imageW, self.imageH ))
 
 class Pipes(GameObject):
     
     def __init__(self,ground):
         super().__init__(width,0)
         self.pipes = []
-        self.gapSize = 220
+        self.gapSize = 225
         self.waitTime = 140
         self.counter = self.waitTime
         self.border = 20
@@ -204,6 +239,20 @@ class Collisions(GameObject):
     def playerCollides(self, player, square):
         rect1 = pygame.Rect(player.x-player.r, player.y-player.r, player.r*2, player.r*2)
         rect2 = pygame.Rect(square.x, square.y, square.w, square.h )
+        hitboxScaleX = .7
+        hitboxDifY = 20        
+        rect2W = rect2.w
+        rect2H = rect2.h
+        rect2X = rect2.x
+        rect2Y = rect2.y
+        rect2.w = rect2W*hitboxScaleX
+        rect2.h = rect2H-hitboxDifY
+        rect2.x += (rect2W-rect2.w)//2
+        if not square.topPipe:
+            rect2.y += (rect2H-rect2.h)//2
+        else:
+            rect2.y += hitboxDifY//2
+        #pygame.draw.rect(screen, self.color, rect2)
         return rect2.colliderect(rect1)
     
     
