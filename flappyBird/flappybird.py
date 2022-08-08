@@ -103,9 +103,18 @@ class Bird(GameObject):
         self.yv += self.g
         self.y += self.yv
 
+    def rotateBird(self, image):
+        
+        angle = (self.yv/self.jumpV)*-30
+        rotated_image = pygame.transform.rotate(image, angle)
+        new_rect = rotated_image.get_rect(center = image.get_rect(center = (self.x, self.y)).center)
+
+        return rotated_image, new_rect
+
     def draw(self):
+        drawImage, drawRect = self.rotateBird(self.birdFrames[int(self.frameCounter)%len(self.birdFrames)])
         #pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
-        screen.blit(self.birdFrames[int(self.frameCounter)%len(self.birdFrames)], pygame.Rect(self.x-(self.r*1.5), self.y-(self.r), self.r*2, self.r*2 ))
+        screen.blit(drawImage, pygame.Rect(drawRect.x, drawRect.y, self.r*2, self.r*2 ))
         #pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 class Background(GameObject):
@@ -120,7 +129,7 @@ class Background(GameObject):
         
     def draw(self):
         screen.blit(self.backImage, pygame.Rect(self.x, self.y, self.w, self.h ))
-        
+
 class Ground(GameObject):
 
     def __init__(self):
@@ -166,10 +175,7 @@ class Pipe(GameObject):
         self.pipeFilePath = "./assets/Background/top_pipe-sheet0.png"
         self.pipeImage = pygame.image.load(self.pipeFilePath)        
         self.pipeImage = pygame.transform.smoothscale(self.pipeImage, (self.imageW , self.imageH ))
-
-        
-
-               
+             
     def update(self):
         self.x += self.xv
         
@@ -197,9 +203,7 @@ class Pipes(GameObject):
         self.counter = self.waitTime
         self.border = 20
         self.groundHeight = ground.h
-        self.keepSpawning = True
-        
-        
+        self.keepSpawning = True       
         
         self.addPipe()
 
@@ -228,7 +232,6 @@ class Pipes(GameObject):
     def draw(self):
         for pipe in self.pipes:
             pipe.draw()
-
 
 
 class Collisions(GameObject):
@@ -271,7 +274,20 @@ class Collisions(GameObject):
         if bird.dead:
             pipes.stop()
             ground.stop()
-   
+
+
+
+class Score(GameObject):
+    
+    def __init__(self):
+        super().__init__(0,0)
+        self.scoreInt = 0
+        
+        
+    def getScore(self):
+        return str(self.scoreInt)
+
+
    
 class Game:
     
