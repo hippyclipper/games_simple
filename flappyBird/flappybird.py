@@ -66,6 +66,7 @@ class Bird(GameObject):
         self.jumpV  = 18  
         self.dead = False
         self.grounded = False
+        self.color = RED
         
     def jump(self):
         if not self.dead:
@@ -80,10 +81,22 @@ class Bird(GameObject):
             self.jump()
             
     def update(self):
-        if not self.grounded:
-            self.yv += self.g
-            self.y += self.yv
+        self.yv += self.g
+        self.y += self.yv
+
+
+class Background(GameObject):
+    
+    def __init__(self):
+        super().__init__(0,0)
+        self.w = width
+        self.h = height
+        self.backFilePath = "./assets/Background/background-sheet0.png"
+        self.backImage = pygame.image.load(self.backFilePath)        
+        self.backImage = pygame.transform.scale(self.backImage, (self.w, self.h))
         
+    def draw(self):
+        screen.blit(self.backImage, pygame.Rect(self.x, self.y, self.w, self.h ))
         
 class Ground(GameObject):
 
@@ -91,17 +104,40 @@ class Ground(GameObject):
         self.h = 50
         super().__init__(0,height-self.h)
         self.w = width
-        
+        self.groundFilePath = "./assets/Background/ground-sheet0.png"
+        self.groundImage = pygame.image.load(self.groundFilePath)        
+        self.groundImage = pygame.transform.smoothscale(self.groundImage, (self.w, self.h))
+        self.xv = -2
+        self.stopMoving = False
+    
+    def stop(self):
+        self.stopMoving = True
+    
+    def update(self):
+        if self.stopMoving:
+            return
+        self.x += self.xv
+        if self.x == -self.w:
+            self.x = 0
+
+    
     def draw(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+        screen.blit(self.groundImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+        screen.blit(self.groundImage, pygame.Rect(self.x+self.w, self.y, self.w, self.h ))
         
 class Pipe(GameObject):
     
-    def __init__(self,x,y,h):
+    def __init__(self,x,y,h,topPipe):
         super().__init__(x,y)
-        self.w = 50
+        self.w = 100
         self.h = h
         self.xv = -2
+        self.topPipe = topPipe
+        self.color = BLUE
+
+        self.pipeFilePath = "./assets/Background/top_pipe-sheet0.png"
+        self.pipeImage = pygame.image.load(self.pipeFilePath)        
+        self.pipeImage = pygame.transform.smoothscale(self.pipeImage, (self.w, height))
                
     def update(self):
         self.x += self.xv
@@ -110,7 +146,11 @@ class Pipe(GameObject):
         self.xv = 0
         
     def draw(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.w, self.h ))
+        
+        if not self.topPipe:
+            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+        else:
+            screen.blit(self.pipeImage, pygame.Rect(self.x, self.y-height+self.h , self.w, self.h ))
 
 class Pipes(GameObject):
     
@@ -137,8 +177,8 @@ class Pipes(GameObject):
         if not self.keepSpawning:
             return
         randY = random.randint(self.border, height - self.gapSize - self.border - self.groundHeight)
-        pipe1 = Pipe(width, 0, randY)
-        pipe2 = Pipe(width, self.gapSize+randY, height-(self.gapSize+randY) )
+        pipe1 = Pipe(width, 0, randY,True)
+        pipe2 = Pipe(width, self.gapSize+randY, height-(self.gapSize+randY),False )
         self.pipes.append(pipe1)
         self.pipes.append(pipe2)
         
@@ -168,22 +208,20 @@ class Collisions(GameObject):
     
     
     def handleBirdAndPipes(self, bird, pipes, ground):
-
+   
         for pipe in pipes.pipes:
             if self.playerCollides(bird,pipe):
                 bird.die()
                 
-        if self.playerCollides(bird,ground):
+        if bird.y+bird.r > ground.y:
             bird.die()
             bird.y = ground.y - bird.r
             bird.grounded = True
+            bird.yv = 0            
         
         if bird.dead:
             pipes.stop()
-                
-   
-   
-   
+            ground.stop()
    
    
 class Game:
@@ -193,6 +231,7 @@ class Game:
         self.ground = Ground()
         self.pipes = Pipes(self.ground)
         self.collisions = Collisions()
+        self.background = Background()
         self.restartTimer = 0
         self.deathResetTime = 100
         
@@ -220,14 +259,19 @@ class Game:
     def update(self):
         self.checkBirdDeath()
         self.handleCollisons()
+        
+        self.background.update()
         self.bird.update()
         self.pipes.update()
         self.ground.update()
     
     def draw(self):
-        self.bird.draw()
+        self.background.draw()
         self.pipes.draw()
         self.ground.draw()
+        self.bird.draw()
+
+        
         
         
 game = Game()
