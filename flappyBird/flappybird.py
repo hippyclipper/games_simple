@@ -32,9 +32,8 @@ done = False
 # self.fallImageLeft = pygame.transform.flip(self.fallImageRight, True, False)
 
 #TODO
-#bird animations
-#   3 frames/wing flap/tilt based on yv
-#score
+#bird death picture
+#background clounds
 
 class GameObject:
     
@@ -274,6 +273,14 @@ class Collisions(GameObject):
         if bird.dead:
             pipes.stop()
             ground.stop()
+            
+            
+    def checkScore(self, scoreboard, bird, pipes):
+        for pipe in pipes.pipes:
+            edge = pipe.x+pipe.w
+            if edge >= bird.x and edge+pipe.xv < bird.x:
+                scoreboard.addScore()
+                return
 
 
 
@@ -281,11 +288,26 @@ class Score(GameObject):
     
     def __init__(self):
         super().__init__(0,0)
+        self.color = BACKGROUND
         self.scoreInt = 0
+        self.font = pygame.font.SysFont('arial', 80)
+        self.textScore = self.font.render(str(self.scoreInt),True,self.color)
+        self.textScoreLocation = self.textScore.get_rect(center = screen.get_rect().center)
         
         
     def getScore(self):
         return str(self.scoreInt)
+    
+    def addScore(self):
+        self.scoreInt += 1
+    
+    def update(self):
+        self.textScore = self.font.render(str(self.scoreInt),True,self.color)
+        self.textScoreLocation = self.textScore.get_rect(center = screen.get_rect().center)
+    
+    def draw(self):
+        screen.blit(self.textScore, [self.textScoreLocation[0], self.textScoreLocation[1]*.3])
+        
 
 
    
@@ -297,6 +319,7 @@ class Game:
         self.pipes = Pipes(self.ground)
         self.collisions = Collisions()
         self.background = Background()
+        self.score = Score()
         self.restartTimer = 0
         self.deathResetTime = 100
         
@@ -305,6 +328,7 @@ class Game:
         self.bird = Bird()
         self.ground = Ground()
         self.pipes = Pipes(self.ground)
+        self.score = Score()
         self.collisions = Collisions()
         self.restartTimer = 0
           
@@ -312,6 +336,7 @@ class Game:
         self.bird.handlePress(direction, pressed)
         
     def handleCollisons(self):
+        self.collisions.checkScore(self.score, self.bird, self.pipes)
         self.collisions.handleBirdAndPipes(self.bird, self.pipes, self.ground)
     
     
@@ -325,6 +350,7 @@ class Game:
         self.checkBirdDeath()
         self.handleCollisons()
         
+        self.score.update()
         self.background.update()
         self.bird.update()
         self.pipes.update()
@@ -335,6 +361,7 @@ class Game:
         self.pipes.draw()
         self.ground.draw()
         self.bird.draw()
+        self.score.draw()
 
         
         
