@@ -68,7 +68,8 @@ class Bird(GameObject):
         self.frameCounter = 0
         self.frameJump = .2
         self.birdFrames = []
-        self.jumpV  = 18  
+        self.jumpV  = 18
+        self.angle = 0
         self.dead = False
         self.grounded = False
         self.color = RED
@@ -104,8 +105,12 @@ class Bird(GameObject):
 
     def rotateBird(self, image):
         
-        angle = (self.yv/self.jumpV)*-30
-        rotated_image = pygame.transform.rotate(image, angle)
+        
+        if not self.dead:
+            self.angle = (self.yv/self.jumpV)*-30
+        elif self.dead and abs(self.yv) > 2:
+            self.angle = (self.yv/self.jumpV)*-30
+        rotated_image = pygame.transform.rotate(image, self.angle)
         new_rect = rotated_image.get_rect(center = image.get_rect(center = (self.x, self.y)).center)
 
         return rotated_image, new_rect
@@ -117,7 +122,7 @@ class Bird(GameObject):
         #pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 class Background(GameObject):
-    
+#"C:\Users\camer\code\games_simple\flappyBird\assets\Background\cloud-sheet0.png"   
     def __init__(self):
         super().__init__(0,0)
         self.w = width
@@ -126,8 +131,14 @@ class Background(GameObject):
         self.backImage = pygame.image.load(self.backFilePath)        
         self.backImage = pygame.transform.scale(self.backImage, (self.w, self.h))
         
+        self.cloudFilePath = "./assets/Background/cloud-sheet0.png" 
+        self.cloudImage = pygame.image.load(self.cloudFilePath)
+        self.cloudImage = pygame.transform.scale(self.cloudImage, (self.w, self.h))
+        
+        
     def draw(self):
         screen.blit(self.backImage, pygame.Rect(self.x, self.y, self.w, self.h ))
+        screen.blit(self.cloudImage, pygame.Rect(self.x, self.y, self.w, self.h ))
 
 class Ground(GameObject):
 
@@ -306,7 +317,7 @@ class Score(GameObject):
         self.textScoreLocation = self.textScore.get_rect(center = screen.get_rect().center)
     
     def draw(self):
-        screen.blit(self.textScore, [self.textScoreLocation[0], self.textScoreLocation[1]*.3])
+        screen.blit(self.textScore, [self.textScoreLocation[0], self.textScoreLocation[1]*.1])
         
 
 
